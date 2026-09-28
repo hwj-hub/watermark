@@ -1,0 +1,3100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#6d28d9">
+<title>워터마크 넣기 · 사진 여러 장과 PDF에 글자·로고 워터마크를 한 번에, 업로드 없이</title>
+<meta name="description" content="사진 여러 장과 PDF 모든 쪽에 글자나 로고 워터마크를 한 번에 넣습니다. 신분증·통장 사본에 「○○ 제출용 · 다른 용도 사용 금지」를 바둑판으로 깔거나, 상품 사진 모서리에 로고를 찍을 때 씁니다. 크기·투명도·각도·간격을 바꾸면 미리보기가 바로 바뀌고, 여러 장은 ZIP으로 받습니다. 파일을 서버로 올리지 않고 내 브라우저 안에서만 처리합니다. 설치도 회원가입도 없습니다.">
+<meta property="og:title" content="워터마크 넣기 · 사진·PDF에 글자·로고를 한 번에">
+<meta property="og:description" content="신분증 사본 「제출용」 문구, 상품 사진 로고를 여러 장·PDF 모든 쪽에 한 번에. 업로드 없이 브라우저 안에서만 처리합니다.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://hwj-hub.github.io/watermark/">
+<meta property="og:image" content="https://hwj-hub.github.io/watermark/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="워터마크 넣기 — 사진 여러 장과 PDF에 글자·로고 워터마크를 한 번에 넣는 무료 도구">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='88'%3E%F0%9F%92%A7%3C/text%3E%3C/svg%3E">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  color-scheme:light dark;
+  --bg:#f5f3fb; --card:#fff; --card2:#f7f5fc; --fg:#1b1530; --muted:#645c7d; --line:#e4dff2;
+  --accent:#6d28d9; --accent2:#a855f7; --afg:#fff;
+  --ok:#059669; --okbg:#e8f7f1; --warn:#b45309; --warnbg:#fef4e6; --danger:#dc2626; --dangerbg:#fdecec;
+  --shadow:0 1px 2px rgba(27,21,48,.05),0 8px 24px -14px rgba(27,21,48,.30);
+  --r:16px;
+}
+@media (prefers-color-scheme:dark){
+ :root{
+  --bg:#0f0b1a; --card:#1a1429; --card2:#140f21; --fg:#eeeaf8; --muted:#a79fc2; --line:#2e2645;
+  --accent:#b794f6; --accent2:#d8b4fe; --afg:#1d0b3a;
+  --ok:#34d399; --okbg:#0c2b23; --warn:#fbbf24; --warnbg:#2a2110; --danger:#f87171; --dangerbg:#2c1414;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -16px rgba(0,0,0,.8);
+ }
+}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);line-height:1.55;word-break:keep-all;overflow-wrap:anywhere;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic","Apple SD Gothic Neo",Roboto,sans-serif;
+  -webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+.wrap{max-width:1180px;margin:0 auto;padding:0 14px calc(70px + env(safe-area-inset-bottom))}
+.hide{display:none !important}
+.nw{white-space:nowrap}
+
+/* ══ 광고 슬롯 ══ 자리만 비워 두고 화면 폭에 맞는 크기를 AD 가 채운다.
+   크기를 미리 잡아 두어 광고가 늦게 떠도 화면이 밀리지 않는다(애드핏: 광고 공간은 고정되어야 함) */
+.ad-slot{display:flex;align-items:center;justify-content:center;margin:10px auto;max-width:100%}
+.ad-top{width:320px;height:50px;max-width:100%}
+.ad-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;border:1px dashed var(--line);
+  border-radius:8px;background:var(--card2);color:var(--muted);font-size:11px;letter-spacing:.08em;font-weight:600}
+/* ── 인앱 브라우저 안내 띠 ── 앱 안 WebView 는 파일을 내려받지 못한다 */
+.iabar{display:none;align-items:center;gap:10px;margin:10px 0 0;padding:11px 12px;border-radius:12px;
+  background:var(--warnbg);border:1px solid color-mix(in srgb,var(--warn) 34%,transparent);line-height:1.5}
+body.inapp .iabar{display:flex}
+.iabar .ia-t{flex:1 1 auto;min-width:0;font-size:12.5px;font-weight:700;color:var(--fg)}
+.iabar .ia-t small{display:block;font-size:11.5px;font-weight:600;color:var(--muted);margin-top:2px}
+.iabar .ia-go{flex:0 0 auto;font:inherit;font-size:12.5px;font-weight:800;color:#fff;border:0;border-radius:999px;
+  padding:9px 14px;min-height:38px;cursor:pointer;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+@media (prefers-color-scheme:dark){.iabar .ia-go{color:var(--afg)}}
+.iabar .ia-x{flex:0 0 auto;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:transparent;
+  color:var(--muted);font:inherit;font-size:12px;line-height:1;cursor:pointer}
+/* ── 앱 안에서 열었을 때 막는 창 ── 토스트(z-index 99)보다는 아래에 둔다 */
+.iamodal{position:fixed;inset:0;z-index:90;display:none;align-items:center;justify-content:center;padding:18px;
+  background:rgba(12,6,26,.72);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+body.ia-lock{overflow:hidden}
+body.ia-lock .iamodal{display:flex}
+body.ia-lock .wrap{pointer-events:none}
+.iasheet{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);
+  width:100%;max-width:420px;max-height:92vh;overflow:auto;padding:22px 18px 16px;text-align:center}
+.iasheet .iaic{font-size:34px;line-height:1;margin-bottom:10px}
+.iasheet h2{font-size:17.5px;font-weight:800;letter-spacing:-.02em;margin:0 0 10px;line-height:1.45}
+.iap{font-size:13.5px;font-weight:600;color:var(--muted);line-height:1.7;margin:0 0 14px}
+.iap b{color:var(--fg);font-weight:800}
+.iasteps{text-align:left;margin:0 0 16px;padding:12px 14px 12px 32px;border-radius:12px;background:var(--card2);
+  font-size:13px;font-weight:600;color:var(--muted);line-height:1.7}
+.iasteps li+li{margin-top:5px}
+.iasteps b{color:var(--fg);font-weight:800}
+.iabtn{display:block;width:100%;font:inherit;font-size:15px;font-weight:800;color:#fff;border:0;border-radius:12px;
+  padding:14px;min-height:52px;cursor:pointer;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  box-shadow:var(--shadow)}
+@media (prefers-color-scheme:dark){.iabtn{color:var(--afg)}}
+.iafine{margin:12px 0 0;font-size:12px;font-weight:600;color:var(--muted);line-height:1.6}
+.iafine button{font:inherit;font-size:12px;font-weight:700;color:var(--muted);background:none;border:0;padding:6px 8px;
+  text-decoration:underline;cursor:pointer;min-height:36px}
+.dwarn{margin:10px 0 0;padding:10px 12px;border-radius:10px;background:var(--warnbg);font-size:12.5px;font-weight:700;line-height:1.6}
+.dwarn button{font:inherit;font-size:12.5px;font-weight:800;color:var(--accent);background:none;border:0;padding:9px 2px;margin:-9px 0;
+  text-decoration:underline;cursor:pointer}
+.ad-lab{display:block;text-align:center;font-size:9.5px;font-weight:700;letter-spacing:.14em;color:var(--muted);opacity:.7;margin:12px 0 -4px}
+body.no-ad .ad-slot,.ad-none{display:none !important}
+/* PC 옆 칸 — 미리보기 카드 바로 위 320×50 (좁은 화면에서는 숨긴다) */
+@media (max-width:979px){#ad-side{display:none}}
+@media (min-width:980px){#ad-side{margin:14px auto 0}}
+/* 본문 광고는 버튼·입력칸에서 넉넉히 떼어 놓는다 — 실수로 눌리는 자리는 금지 */
+#ad-mid{margin:18px auto}
+
+/* ── 하단 오버형 ── 콘텐츠를 가리지 않도록 본문 아래 여백을 같이 늘린다(애드핏: 콘텐츠를 덮는 배치 금지).
+   입력 중·미리보기를 보는 중에는 띄우지 않는다 — 핵심 행동 중 광고 노출 금지 조항 */
+#anchor{position:fixed;left:0;right:0;bottom:0;z-index:45;display:flex;align-items:center;justify-content:center;
+  background:var(--card);border-top:1px solid var(--line);box-shadow:0 -8px 22px -14px rgba(0,0,0,.55);
+  padding:8px 4px calc(8px + env(safe-area-inset-bottom));transform:translateY(120%);
+  /* 바 위쪽에 붙은 「광고」 라벨·닫기는 translateY 로 내려도 화면에 걸쳐 남는다 — 통째로 감춘다 */
+  visibility:hidden;pointer-events:none;transition:transform .22s,visibility 0s linear .22s}
+#anchor.on{transform:none;visibility:visible;pointer-events:auto;transition:transform .22s,visibility 0s}
+#anchor .ad-slot{margin:0}
+#anchor .amk{position:absolute;left:10px;top:-11px;font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--muted);
+  background:var(--card);border:1px solid var(--line);border-radius:5px;padding:0 5px;line-height:15px}
+/* 닫기는 광고 영역 밖에 둔다 — 광고 안에 닫기 버튼을 넣는 것은 금지(오클릭 방지) */
+#anchor .axl{position:absolute;right:6px;top:-38px;width:36px;height:36px;border-radius:50%;cursor:pointer;
+  border:1px solid var(--line);background:var(--card);color:var(--muted);font-size:13px;line-height:1;box-shadow:var(--shadow)}
+#anchor .axl::before{content:'';position:absolute;inset:-6px}
+body.anch .wrap{padding-bottom:calc(124px + env(safe-area-inset-bottom))}
+body.anch #toast{bottom:calc(118px + env(safe-area-inset-bottom))}
+@media (min-width:980px){#anchor{display:none}}
+
+/* ── 저장 완료 카드 ── 화면을 덮지 않고 본문 흐름 안에 펼친다 */
+#doneCard{border-color:color-mix(in srgb,var(--ok) 40%,var(--line))}
+#doneCard .ad-lab{margin-top:16px}
+.dmsg{margin:0 0 10px;font-size:14px;font-weight:700;line-height:1.6}
+.dsteps{margin:0;padding:0 0 0 20px;font-size:13px;font-weight:600;line-height:1.75;color:var(--muted)}
+.dsteps b{color:var(--fg);font-weight:800}
+
+header{text-align:center;padding:14px 0 2px}
+.logo{display:inline-flex;align-items:center;gap:9px;font-size:22px;font-weight:800;letter-spacing:-.02em}
+.logo .ico{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:17px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:var(--shadow)}
+.tag{font-size:14.5px;font-weight:600;color:var(--muted);margin:8px 0 0}
+.tag b{color:var(--fg)}
+.badges{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px}
+.badge{font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--okbg);color:var(--ok);border:1px solid transparent}
+.badge.gray{background:var(--card2);color:var(--muted);border-color:var(--line)}
+
+/* ── 두 칸 배치 · 넓은 화면에서 미리보기를 옆에 붙인다 ── */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:0 16px}
+@media (min-width:980px){
+  .layout{grid-template-columns:minmax(0,1fr) 430px;align-items:start}
+  /* 옆 칸이 화면보다 길면 스스로 스크롤한다 — sticky 만 두면 저장 완료 카드가 화면 밖에 남는다 */
+  .side{position:sticky;top:8px;max-height:calc(100vh - 16px);overflow:auto;overscroll-behavior:contain;
+    scrollbar-width:thin;padding:0 2px 12px}
+  .side .pvbox canvas{max-height:calc(100vh - 360px)}
+}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px;margin-top:14px}
+.card h2{font-size:12px;font-weight:800;color:var(--muted);margin:0 0 12px;letter-spacing:.07em;
+  display:flex;align-items:center;justify-content:space-between;gap:8px}
+.card h2 .n{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;margin-right:6px;
+  background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent);letter-spacing:0;font-size:11.5px}
+.card h2 .cnt{color:var(--accent);letter-spacing:0}
+.pvinfo{font-size:11.5px;font-weight:700;color:var(--accent);letter-spacing:0;text-align:right;min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ── 1. 파일 넣기 ── */
+#drop{border:2px dashed var(--line);border-radius:14px;background:var(--card2);padding:26px 16px;text-align:center;
+  cursor:pointer;transition:.18s}
+#drop:hover,#drop.over,#drop:focus-visible{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 6%,var(--card2));outline:none}
+#drop.over{box-shadow:0 0 0 4px rgba(109,40,217,.16)}
+#drop .big{font-size:36px;line-height:1}
+#drop .t1{font-weight:800;font-size:16.5px;margin-top:8px}
+#drop .t2{color:var(--muted);font-size:12.5px;margin-top:4px}
+#file,#logoFile{display:none}
+
+/* ── 2. 설정 ── */
+.row{margin-top:16px}
+.row:first-child{margin-top:0}
+.lab{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-size:13.5px;font-weight:800;margin-bottom:8px}
+.lab .hint{font-weight:500;color:var(--muted);font-size:12px;text-align:right}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{flex:1 1 84px;border:1px solid var(--line);background:var(--card2);color:var(--fg);font:inherit;font-size:13px;
+  font-weight:700;padding:9px 6px;border-radius:11px;cursor:pointer;min-height:48px;transition:.15s;line-height:1.3}
+.seg button i{display:block;font-style:normal;font-size:11px;font-weight:600;color:var(--muted);margin-top:2px}
+.seg button:hover{border-color:var(--accent)}
+.seg button.on{border-color:transparent;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:var(--shadow)}
+.seg button.on i{color:rgba(255,255,255,.85)}
+@media (prefers-color-scheme:dark){.seg button.on{color:var(--afg)}.seg button.on i{color:rgba(29,11,58,.72)}}
+
+textarea#wmText{display:block;width:100%;font:inherit;font-size:16px;font-weight:700;color:var(--fg);background:var(--card2);
+  border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-height:74px;resize:vertical;line-height:1.5}
+textarea#wmText:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.chip{border:1px solid var(--line);background:var(--card2);color:var(--muted);font:inherit;font-size:12.5px;font-weight:700;
+  padding:8px 12px;border-radius:999px;cursor:pointer;min-height:42px}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip.on{border-color:var(--accent);color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+
+.logopick{display:flex;gap:12px;align-items:center}
+.logothumb{flex:0 0 auto;width:72px;height:72px;border-radius:12px;border:1px solid var(--line);display:grid;place-items:center;
+  font-size:11.5px;font-weight:700;color:var(--muted);text-align:center;line-height:1.35;overflow:hidden;
+  background:repeating-conic-gradient(color-mix(in srgb,var(--line) 70%,transparent) 0 25%,transparent 0 50%) 0 0/14px 14px}
+.logothumb canvas{max-width:100%;max-height:100%;display:block}
+.logopick .mini{flex:0 0 auto}
+
+/* 슬라이더 — 손가락으로 잡기 쉽게 높이를 넉넉히 */
+.sl{display:grid;grid-template-columns:62px minmax(0,1fr) 54px;gap:10px;align-items:center;margin-top:6px}
+.sl label{font-size:13px;font-weight:800}
+.sl output{font-size:12.5px;font-weight:800;color:var(--accent);text-align:right;font-variant-numeric:tabular-nums}
+.sl input[type=range]{width:100%;height:40px;margin:0;accent-color:var(--accent);cursor:pointer}
+
+.pos{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:240px}
+.pos button{border:1px solid var(--line);background:var(--card2);border-radius:10px;min-height:44px;cursor:pointer;
+  font:inherit;font-size:12px;font-weight:700;color:var(--muted);position:relative}
+.pos button::after{content:'';position:absolute;width:10px;height:10px;border-radius:3px;background:var(--line)}
+.pos button[data-p^=t]::after{top:7px}.pos button[data-p^=m]::after{top:calc(50% - 5px)}.pos button[data-p^=b]::after{bottom:7px}
+.pos button[data-p$=l]::after{left:9px}.pos button[data-p$=c]::after{left:calc(50% - 5px)}.pos button[data-p$=r]::after{right:9px}
+.pos button.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--card2))}
+.pos button.on::after{background:var(--accent)}
+
+.colors{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sw{width:42px;height:42px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0;position:relative}
+.sw.on{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 26%,transparent)}
+.sw.pick{background:conic-gradient(#f43f5e,#f59e0b,#84cc16,#06b6d4,#6366f1,#d946ef,#f43f5e);overflow:hidden}
+.sw.pick input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;border:0;padding:0}
+
+.chk{display:flex;gap:9px;align-items:flex-start;padding:8px 0;cursor:pointer;font-size:13.5px;font-weight:700}
+.chk input{flex:0 0 auto;width:20px;height:20px;margin:1px 0 0;accent-color:var(--accent)}
+.chk i{display:block;font-style:normal;font-size:12px;font-weight:600;color:var(--muted);margin-top:2px;line-height:1.6}
+.two{display:flex;gap:4px 18px;flex-wrap:wrap}
+.sel{font:inherit;font-size:14px;font-weight:700;color:var(--fg);background:var(--card2);border:1px solid var(--line);
+  border-radius:11px;padding:10px 12px;min-height:46px;width:100%}
+.sub-h{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.06em;margin:18px 0 0;padding-top:14px;border-top:1px solid var(--line)}
+
+#prog{display:none;margin-top:12px}
+#prog.show{display:block}
+.bar{height:8px;background:var(--card2);border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .18s}
+.ptxt{font-size:12.5px;color:var(--muted);margin-top:7px;text-align:center;font-weight:600}
+
+/* ── 3. 파일 목록 ── */
+.tools{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.mini{border:1px solid var(--line);background:var(--card);color:var(--fg);font:inherit;font-size:13px;font-weight:700;
+  padding:9px 14px;border-radius:999px;cursor:pointer;min-height:42px;transition:.15s}
+.mini:hover{border-color:var(--accent)}
+.mini.danger:hover{border-color:var(--danger);color:var(--danger)}
+#list{list-style:none;margin:0;padding:0}
+.item{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.item:last-child{border-bottom:0}
+.item.sel{background:color-mix(in srgb,var(--accent) 7%,transparent);border-radius:10px;padding-left:8px;padding-right:8px}
+.item.bad .fname{color:var(--danger)}
+.th{flex:0 0 44px;height:44px;border-radius:9px;background:var(--card2);border:1px solid var(--line);overflow:hidden;
+  display:grid;place-items:center;font-size:11px;font-weight:800;color:var(--muted)}
+.th img{width:100%;height:100%;object-fit:cover;display:block}
+.item.sel .th{border-color:var(--accent)}
+.meta{flex:1;min-width:0}
+.fname{font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fsz{font-size:12px;color:var(--muted);margin-top:2px;font-variant-numeric:tabular-nums}
+.err{color:var(--danger);font-weight:700}
+.ctl{display:flex;gap:5px;flex:0 0 auto;align-items:center}
+.sq{border:1px solid var(--line);background:var(--card2);color:var(--muted);font:inherit;font-size:15px;font-weight:800;
+  width:40px;height:42px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;padding:0}
+.sq:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.sq.x:hover{border-color:var(--danger);color:var(--danger)}
+.sq.go{border-color:transparent;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+.sq.go:disabled{opacity:.35;cursor:default}
+@media (prefers-color-scheme:dark){.sq.go{color:var(--afg)}}
+
+.note{border-radius:11px;padding:10px 12px;font-size:12.5px;font-weight:600;line-height:1.65;margin-top:11px}
+.note b{font-weight:800}
+.note.info{background:var(--card2);color:var(--muted);border:1px solid var(--line)}
+.note.warn{background:var(--warnbg);color:var(--warn)}
+.fine{font-size:12px;font-weight:600;color:var(--muted);line-height:1.65;margin:9px 0 0}
+.fine b{color:var(--fg)}
+.fine a{color:var(--accent);font-weight:800}
+
+/* ── 미리보기 · 저장 ── */
+.btn{flex:1 1 130px;border:1px solid var(--line);background:var(--card2);color:var(--fg);font:inherit;font-size:14px;font-weight:800;
+  padding:11px 12px;border-radius:12px;cursor:pointer;min-height:48px;transition:.15s;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-align:center}
+.btn:hover:not(:disabled){border-color:var(--accent)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.pri{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-color:transparent;box-shadow:var(--shadow)}
+.btn.pri:hover:not(:disabled){filter:brightness(1.06)}
+@media (prefers-color-scheme:dark){.btn.pri{color:var(--afg)}}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.actions .btn.pri{flex:2 1 200px}
+.pvtitle{font-size:13px;font-weight:700;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pvstate{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:0;white-space:nowrap}
+.pvbox{margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;justify-content:center;
+  background:repeating-conic-gradient(color-mix(in srgb,var(--line) 55%,transparent) 0 25%,transparent 0 50%) 0 0/18px 18px}
+.pvbox canvas{display:block;max-width:100%;max-height:62vh;height:auto;box-shadow:0 2px 10px -4px rgba(0,0,0,.35)}
+.pvempty{margin-top:12px;border:1px dashed var(--line);border-radius:12px;background:var(--card2);padding:34px 16px;text-align:center;
+  font-size:13px;font-weight:700;color:var(--muted);line-height:1.7}
+.pvempty .big{display:block;font-size:30px;line-height:1;margin-bottom:8px}
+.pvnav{display:flex;gap:6px;align-items:center;justify-content:center;margin-top:8px;font-size:12.5px;font-weight:700;color:var(--muted)}
+.pvnav .sq{width:42px}
+
+.use{list-style:none;margin:0;padding:0}
+.use li{position:relative;padding-left:26px;margin-bottom:13px;font-size:13.5px;font-weight:600;line-height:1.65}
+.use li:last-child{margin-bottom:0}
+.use li::before{content:"▸";position:absolute;left:4px;top:0;color:var(--accent);font-weight:800}
+.use li b{font-weight:800}
+.use li .d{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-top:3px;line-height:1.7}
+.use li code{background:var(--card2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;color:var(--accent)}
+@media (min-width:980px){.use{columns:2;column-gap:28px}.use li{break-inside:avoid}}
+
+details{border-top:1px solid var(--line);padding:12px 0}
+details:first-of-type{border-top:0}
+summary{cursor:pointer;font-weight:700;font-size:14px;list-style:none;padding:10px 0;margin:-10px 0}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"＋ ";color:var(--accent);font-weight:800}
+details[open] summary::before{content:"－ "}
+details p{margin:8px 0 0;font-size:13.5px;color:var(--muted);line-height:1.8}
+details p b{color:var(--fg)}
+details p a{color:var(--accent);font-weight:800}
+
+footer{text-align:center;color:var(--muted);font-size:12px;margin-top:22px;line-height:1.8}
+footer b{color:var(--fg)}
+
+/* ── 모바일 하단 바 ── 설정을 만지는 동안 미리보기가 화면 아래에 있으면 띄운다 */
+#mbar{position:fixed;left:0;right:0;bottom:0;z-index:50;transform:translateY(115%);transition:transform .22s;
+  background:var(--card);border-top:1px solid var(--line);box-shadow:0 -8px 22px -14px rgba(0,0,0,.55);
+  padding:9px 14px calc(9px + env(safe-area-inset-bottom))}
+#mbar.on{transform:none}
+#mbar .in{max-width:700px;margin:0 auto;display:flex;align-items:center;gap:10px}
+#mbar .k{flex:1 1 auto;min-width:0;font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.03em}
+#mbar .k b{display:block;font-size:13.5px;font-weight:800;color:var(--fg);letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#mbar .go{flex:0 0 auto;font:inherit;font-size:13px;font-weight:800;color:#fff;padding:10px 15px;border-radius:999px;border:0;cursor:pointer;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));min-height:42px}
+@media (prefers-color-scheme:dark){#mbar .go{color:var(--afg)}}
+@media (min-width:980px){#mbar{display:none}}
+#mbarPv{flex:0 0 auto;display:block;border-radius:6px;border:1px solid var(--line);cursor:pointer;background:#fff}
+/* 휴대폰 — 미리보기를 넣기 바로 아래로 올린다(설정을 만지며 결과를 봐야 하는 도구라서).
+   main 을 display:contents 로 풀어 카드들을 한 줄 격자에 직접 세운다 */
+@media (max-width:979px){
+  #form{display:contents}
+  #addCard{order:1} .side{order:2} #setCard{order:3} #listCard{order:4}
+}
+
+#toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:#1b1530;color:#fff;font-size:13.5px;font-weight:700;line-height:1.5;
+  padding:10px 16px;border-radius:14px;width:max-content;opacity:0;pointer-events:none;transition:.25s;z-index:99;max-width:92vw;text-align:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-color-scheme:dark){#toast{background:#eeeaf8;color:#1d0b3a}}
+
+@media (max-width:430px){
+  .card{padding:14px}
+  .lab{flex-direction:column;align-items:stretch;gap:2px}
+  .lab .hint{text-align:left}
+  .seg button{flex:1 1 70px;font-size:12.5px}
+  .tag{font-size:14px}
+  .sl{grid-template-columns:54px minmax(0,1fr) 48px;gap:8px}
+}
+
+/* ══ 주의 문구 ══════════════════════════════════════════
+   워터마크는 「도용을 어렵게」 할 뿐 막지는 못한다.
+   무엇을 보장하지 않는지 페이지 안에서 분명히 밝힌다.
+   ══════════════════════════════════════════════════════ */
+.nbx{border:1px solid var(--warn);border-radius:14px;background:var(--warnbg);padding:14px 15px;margin-top:14px}
+.nbx-h{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:800;color:var(--warn);margin:0 0 10px}
+.nbx-h .ic{flex:0 0 auto;width:19px;height:19px;border-radius:6px;background:var(--warn);color:var(--warnbg);
+  font-size:12px;font-weight:800;display:grid;place-items:center;line-height:1}
+.nbx ul{list-style:none;margin:0;padding:0}
+.nbx li{position:relative;padding-left:12px;margin-bottom:7px;font-size:12px;font-weight:600;line-height:1.68;color:var(--warn)}
+.nbx li:last-child{margin-bottom:0}
+.nbx li::before{content:"·";position:absolute;left:1px;top:-1px;font-weight:800}
+.nbx li b{font-weight:800}
+.nbx .nbx-f{margin:11px 0 0;padding-top:10px;border-top:1px solid color-mix(in srgb,var(--warn) 32%,transparent);
+  font-size:12px;font-weight:700;line-height:1.72;color:var(--warn)}
+.nbx .nbx-f b{font-weight:800}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ╔══════════════════════════════════════════════════════════════════════╗
+     ║  광고 자리 ① 맨 위 · 320×50 (모바일·PC 같은 크기)                     ║
+     ║  단위 ID 는 스크립트 아래쪽 AD.units 한 곳에서 바꿉니다.               ║
+     ║  ins·script 를 여기 직접 쓰지 않고 AD 가 넣는 이유                     ║
+     ║   · 보이는 자리만 부르려고(안 보이는 광고는 부르지 않음)               ║
+     ║   · 한 페이지 4개 제한을 코드 한 곳에서 지키려고                       ║
+     ║  크기는 휴대폰에 들어가는 것만 씁니다 — 320×50 · 320×100 · 300×250     ║
+     ║  한 화면에 4곳 — 모바일 ① 맨 위 ③ 본문 ④ 저장 완료 카드 ⑤ 하단 오버형  ║
+     ║              PC   ① 맨 위 ② 미리보기 위 ③ 본문 ④ 완료 카드            ║
+     ╚══════════════════════════════════════════════════════════════════════╝ -->
+<div class="ad-slot ad-top" id="ad-top"></div>
+
+<!-- 네이버·카카오 앱 안에서 열렸을 때만 보이는 띠 (body.inapp) -->
+<div class="iabar" id="iabar">
+  <div class="ia-t"><span id="iaMsg">앱 안에서 열려서 파일 저장이 안 될 수 있어요.</span>
+    <small id="iaSub">파일을 넣기 전에 옮기면 다시 고르지 않아도 됩니다.</small></div>
+  <button class="ia-go" id="iaGo" type="button">크롬에서 열기</button>
+  <button class="ia-x" id="iaX" type="button" aria-label="안내 닫기">✕</button>
+</div>
+
+<header>
+  <div class="logo"><span class="ico">💧</span><span>워터마크 넣기</span></div>
+  <p class="tag"><b>사진 여러 장</b>과 <b>PDF 모든 쪽</b>에 글자·로고를 한 번에 · 업로드 없이 브라우저에서</p>
+  <div class="badges">
+    <span class="badge">🔒 파일이 서버로 전송되지 않음</span>
+    <span class="badge gray">신분증·통장 사본 「제출용」 문구</span>
+    <span class="badge gray">로고 · 바둑판 · 모서리</span>
+    <span class="badge gray">여러 장은 ZIP으로</span>
+  </div>
+</header>
+
+<div class="layout">
+<main id="form">
+
+<!-- 1. 파일 넣기 -->
+<section class="card" id="addCard">
+  <h2><span><span class="n">1</span>사진·PDF 넣기</span><span class="pvinfo" id="addInfo"></span></h2>
+  <div id="drop" tabindex="0" role="button" aria-label="사진이나 PDF 파일 고르기">
+    <div class="big">🖼️</div>
+    <div class="t1">사진·PDF를 여기에 놓거나 눌러서 선택</div>
+    <div class="t2">JPG · PNG · WEBP · PDF · 여러 개 한 번에 · 섞어서 넣어도 됩니다</div>
+  </div>
+  <input type="file" id="file" accept="image/*,application/pdf,.pdf,.jpg,.jpeg,.png,.webp,.gif,.bmp,.heic,.heif" multiple>
+</section>
+
+<!-- 2. 워터마크 -->
+<section class="card" id="setCard">
+  <h2><span><span class="n">2</span>워터마크</span><span class="pvinfo" id="setHint"></span></h2>
+
+  <div class="row">
+    <div class="seg" id="segKind">
+      <button type="button" data-k="text" class="on">글자<i>문구·날짜</i></button>
+      <button type="button" data-k="logo">로고 사진<i>PNG·JPG</i></button>
+    </div>
+  </div>
+
+  <div class="row" id="textRow">
+    <div class="lab"><span>넣을 글자</span><span class="hint">줄을 바꾸면 여러 줄로 들어갑니다</span></div>
+    <textarea id="wmText" rows="2" maxlength="160" spellcheck="false" aria-label="워터마크 글자">제출용 사본
+다른 용도 사용 금지</textarea>
+    <div class="chips" id="presets">
+      <button type="button" class="chip" data-t="submit">○○ 제출용</button>
+      <button type="button" class="chip" data-t="copy">무단 복제 금지</button>
+      <button type="button" class="chip" data-t="c">© 내 이름</button>
+      <button type="button" class="chip" data-t="conf">대외비</button>
+      <button type="button" class="chip" data-t="sample">SAMPLE</button>
+      <button type="button" class="chip" data-t="date">＋ 오늘 날짜</button>
+    </div>
+  </div>
+
+  <div class="row hide" id="logoRow">
+    <div class="lab"><span>로고 파일</span><span class="hint">배경이 투명한 PNG가 가장 깔끔합니다</span></div>
+    <div class="logopick">
+      <div class="logothumb" id="logoThumb">로고<br>없음</div>
+      <div>
+        <button class="mini" id="logoBtn" type="button">로고 고르기</button>
+        <label class="chk"><input type="checkbox" id="optWhite" checked>
+          <span>흰 배경 지우기<i>JPG 로고처럼 흰 바탕이 있으면 투명하게 바꿉니다</i></span></label>
+      </div>
+    </div>
+    <input type="file" id="logoFile" accept="image/*">
+  </div>
+
+  <div class="row">
+    <div class="lab"><span>배치</span></div>
+    <div class="seg" id="segLayout">
+      <button type="button" data-l="tile" class="on">바둑판<i>화면 전체 반복</i></button>
+      <button type="button" data-l="center">가운데<i>크게 한 번</i></button>
+      <button type="button" data-l="pos">위치 지정<i>모서리 등</i></button>
+    </div>
+  </div>
+
+  <div class="row hide" id="posRow">
+    <div class="pos" id="posGrid" aria-label="워터마크 위치">
+      <button type="button" data-p="tl" aria-label="왼쪽 위"></button><button type="button" data-p="tc" aria-label="위 가운데"></button><button type="button" data-p="tr" aria-label="오른쪽 위"></button>
+      <button type="button" data-p="ml" aria-label="왼쪽 가운데"></button><button type="button" data-p="mc" aria-label="한가운데"></button><button type="button" data-p="mr" aria-label="오른쪽 가운데"></button>
+      <button type="button" data-p="bl" aria-label="왼쪽 아래"></button><button type="button" data-p="bc" aria-label="아래 가운데"></button><button type="button" data-p="br" class="on" aria-label="오른쪽 아래"></button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="sl"><label for="rSize">크기</label><input type="range" id="rSize" min="2" max="24" step="0.5" value="5"><output id="oSize"></output></div>
+    <div class="sl"><label for="rOpa">진하기</label><input type="range" id="rOpa" min="5" max="100" step="1" value="35"><output id="oOpa"></output></div>
+    <div class="sl" id="angleRow"><label for="rAng">각도</label><input type="range" id="rAng" min="-90" max="90" step="1" value="-30"><output id="oAng"></output></div>
+    <div class="sl" id="gapRow"><label for="rGap">간격</label><input type="range" id="rGap" min="0.4" max="5" step="0.1" value="1.1"><output id="oGap"></output></div>
+  </div>
+
+  <div class="row" id="colorRow">
+    <div class="lab"><span>글자 색</span></div>
+    <div class="colors" id="colors">
+      <button type="button" class="sw on" data-c="#5b5b5b" style="background:#5b5b5b" aria-label="회색"></button>
+      <button type="button" class="sw" data-c="#000000" style="background:#000" aria-label="검정"></button>
+      <button type="button" class="sw" data-c="#ffffff" style="background:#fff" aria-label="흰색"></button>
+      <button type="button" class="sw" data-c="#e11d48" style="background:#e11d48" aria-label="빨강"></button>
+      <button type="button" class="sw" data-c="#2563eb" style="background:#2563eb" aria-label="파랑"></button>
+      <label class="sw pick" id="pickSw" aria-label="다른 색 고르기"><input type="color" id="pickColor" value="#7c3aed"></label>
+    </div>
+    <div class="two">
+      <label class="chk"><input type="checkbox" id="optBold" checked><span>굵게</span></label>
+      <label class="chk"><input type="checkbox" id="optStroke"><span>테두리<i>밝은 곳·어두운 곳 어디서나 보이게</i></span></label>
+    </div>
+  </div>
+
+  <div class="sub-h">저장 형식 (사진)</div>
+  <div class="row" style="margin-top:10px">
+    <div class="seg" id="segFmt">
+      <button type="button" data-f="same" class="on">원래 형식 그대로<i>JPG는 JPG, PNG는 PNG</i></button>
+      <button type="button" data-f="jpg">모두 JPG로<i>용량이 작아집니다</i></button>
+    </div>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <select class="sel" id="selSize" aria-label="사진 크기">
+      <option value="0">사진 크기: 원본 그대로</option>
+      <option value="2560">긴 변 2560px로 줄이기</option>
+      <option value="1920">긴 변 1920px로 줄이기</option>
+      <option value="1280">긴 변 1280px로 줄이기 (블로그·쇼핑몰)</option>
+    </select>
+    <p class="fine">사진은 워터마크가 <b>픽셀에 박힌 새 그림</b>으로 저장되고, 촬영 위치(GPS) 같은 <b>사진 속 정보는 빠집니다.</b> PDF는 쪽 크기·글자를 그대로 두고 맨 위에 워터마크를 한 겹 얹습니다.</p>
+  </div>
+
+  <div id="prog"><div class="bar"><i id="bar"></i></div><div class="ptxt" id="ptxt">처리 중…</div></div>
+</section>
+
+<!-- 3. 파일 목록 -->
+<section class="card hide" id="listCard">
+  <h2><span><span class="n">3</span>파일 <span class="cnt" id="cnt">0</span>개</span><span class="pvinfo" id="sumInfo"></span></h2>
+  <div class="tools">
+    <button class="mini" id="addMore" type="button">＋ 파일 추가</button>
+    <button class="mini danger" id="clear" type="button">전체 삭제</button>
+  </div>
+  <ul id="list"></ul>
+  <div class="note info">파일을 <b>누르면</b> 미리보기가 그 파일로 바뀝니다. 오른쪽 <b>⬇</b> 로 한 장씩 받을 수도 있습니다.
+    워터마크 설정은 <b>모든 파일에 똑같이</b> 들어갑니다(크기는 사진마다 짧은 변 기준으로 맞춥니다).</div>
+</section>
+
+</main>
+
+<aside class="side" id="side">
+  <!-- 광고 자리 ② PC 미리보기 카드 바로 위 320×50 · 좁은 화면에서는 숨깁니다 -->
+  <div class="ad-slot" id="ad-side"></div>
+  <section class="card pv" id="pvCard">
+    <h2><span>미리보기 · 저장</span><span class="pvstate" id="pvState"></span></h2>
+    <div class="pvtitle" id="pvTitle">워터마크를 넣은 모습이 여기에 나옵니다</div>
+    <div class="actions">
+      <button class="btn pri" id="dlAll" type="button" disabled>⬇ 저장하기</button>
+      <button class="btn" id="dlOne" type="button" disabled>이 파일만</button>
+    </div>
+    <div class="pvempty" id="pvEmpty"><span class="big">💧</span>사진이나 PDF를 넣으면<br>워터마크를 넣은 모습이 바로 나옵니다.</div>
+    <div class="pvbox hide" id="pvBox"><canvas id="pv" width="10" height="10" aria-label="워터마크 미리보기"></canvas></div>
+    <div class="pvnav hide" id="pvNav"><button class="sq" id="pvPrev" type="button" aria-label="앞 파일">‹</button><span id="pvPos"></span><button class="sq" id="pvNext" type="button" aria-label="다음 파일">›</button></div>
+    <p class="fine hide" id="pvNote"></p>
+  </section>
+
+  <!-- 광고 자리 ④ 저장 완료 카드 300×250 — 저장을 누른 다음에 펼쳐지고, 화면을 덮지 않습니다.
+       닫기는 카드 머리(광고에서 멀리 떨어진 곳)에 둡니다 — 광고 안 닫기 버튼은 금지 -->
+  <section class="card hide" id="doneCard">
+    <h2><span>저장했습니다</span><button class="mini" id="doneHide" type="button">닫기</button></h2>
+    <p class="dmsg" id="doneMsg"></p>
+    <ol class="dsteps">
+      <li>저장한 파일을 <b>열어서</b> 워터마크가 중요한 글자·얼굴을 너무 가리지 않는지 보세요.</li>
+      <li>신분증 사본이라면 <b>주민등록번호 뒷자리</b>도 가렸는지 확인하세요.</li>
+      <li><b>원본은 따로 보관</b>하세요. 사진에 박힌 워터마크는 되돌릴 수 없습니다.</li>
+    </ol>
+    <p class="dwarn hide" id="doneInapp">저장된 파일이 안 보이나요? 앱 안 브라우저는 내려받기가 막혀 있습니다.
+      <button type="button" id="doneGo">다른 브라우저로 열기</button></p>
+    <div id="doneAd"><span class="ad-lab">광고</span><div class="ad-slot" id="ad-done"></div></div>
+  </section>
+</aside>
+</div>
+
+<!-- 광고 자리 ③ 본문 중간 320×100 — 넣기·설정 칸이 다 끝난 자리에 둡니다(입력 중 광고 금지 조항).
+     버튼·입력칸에서 18px 이상 떼어 놓습니다. 모바일·PC 가 같은 자리라 단위 ID 하나면 됩니다 -->
+<div class="ad-slot" id="ad-mid"></div>
+
+<section class="card">
+  <h2><span>이럴 때 씁니다</span></h2>
+  <ul class="use">
+    <li><b>신분증·통장 사본을 보낼 때</b>
+      <span class="d">알바·부동산·중고거래에서 신분증 사본을 달라고 할 때, 사진 위에 <code>○○ 제출용 · 다른 용도 사용 금지 · 날짜</code>를
+        바둑판으로 깔아 두면 그 사본을 다른 곳에 다시 쓰기 어려워집니다. <b>○○ 제출용</b> 단추를 누르면 ○○ 자리가 선택된 채로 들어가 바로 고쳐 쓸 수 있습니다.</span></li>
+    <li><b>상품 사진·작업물에 로고를 찍을 때</b>
+      <span class="d">쇼핑몰·중고거래·블로그에 올릴 사진 수십 장 모서리에 로고를 똑같은 크기로 찍습니다.
+        크기는 사진마다 <b>짧은 변 기준</b>으로 맞추므로 가로 사진·세로 사진이 섞여도 로고 크기가 들쭉날쭉하지 않습니다.</span></li>
+    <li><b>PDF 견적서·시안·원고를 보낼 때</b>
+      <span class="d">PDF <b>모든 쪽</b>에 <code>대외비</code>·<code>SAMPLE</code>·<code>검토용</code> 같은 문구를 한 번에 얹습니다.
+        글자는 그대로라 받는 쪽에서 <b>검색·복사도 됩니다.</b></span></li>
+    <li><b>남에게 보이면 안 되는 서류</b>
+      <span class="d">신분증·통장·계약서는 <b>업로드 자체를 하지 않는</b> 이 도구가 맞습니다.
+        페이지를 연 뒤 인터넷을 꺼도 그대로 동작합니다.</span></li>
+  </ul>
+</section>
+
+<section class="card">
+  <h2><span>자주 묻는 것</span></h2>
+
+  <details>
+    <summary>파일이 정말 서버로 안 올라가나요?</summary>
+    <p>올라가지 않습니다. 이 페이지에는 <b>파일을 어디론가 보내는 코드 자체가 없습니다.</b>
+      사진과 PDF는 브라우저 메모리에서 읽어 브라우저 안에서 워터마크를 넣고, 결과도 브라우저가 직접 저장합니다.
+      확인하고 싶으면 <b>페이지를 연 뒤 인터넷(와이파이)을 끄고</b> 써 보세요. 그대로 동작합니다.</p>
+  </details>
+
+  <details>
+    <summary>신분증 사본에는 어떻게 넣는 게 좋나요?</summary>
+    <p><b>누구에게, 무슨 용도로, 언제</b> 냈는지가 들어가야 효과가 있습니다. 예: <b>「○○부동산 전세계약용 · 다른 용도 사용 금지 · 2026.09.23」</b>.
+      얼굴 사진과 이름·생년월일 위를 지나가게 <b>바둑판</b>으로 깔고, 진하기는 글자가 읽힐 정도(30~45%)가 적당합니다.
+      <b>주민등록번호 뒷자리는 워터마크로 가려지지 않습니다.</b> 뒷자리를 요구하지 않는 곳이라면
+      <a href="https://jakup.com/tools/image-mask" target="_blank" rel="noopener">신분증·서류 마스킹</a> 도구로 먼저 가린 뒤 워터마크를 넣으세요.</p>
+  </details>
+
+  <details>
+    <summary>워터마크를 누가 지울 수 있나요?</summary>
+    <p><b>사진</b>은 워터마크가 픽셀에 박혀 새 그림으로 저장되므로 따로 떼어 낼 수 없습니다.
+      다만 요즘 편집 앱은 작은 모서리 로고 정도는 꽤 자연스럽게 지웁니다. 도용이 걱정되면 <b>바둑판</b>이 가장 지우기 어렵습니다.
+      <b>PDF</b>는 원래 글자를 살려 두려고 워터마크를 <b>맨 위에 한 겹 얹는</b> 방식이라, 전문 PDF 편집 프로그램으로 그 겹을 골라 지울 수 있습니다.
+      지우기 어렵게 하려면 PDF를 사진(JPG)으로 바꾼 뒤 사진으로 넣으세요.</p>
+  </details>
+
+  <details>
+    <summary>사진 화질이 떨어지나요?</summary>
+    <p><b>원래 형식 그대로</b>를 고르면 PNG는 화질 손실 없이, JPG는 품질 92%로 다시 저장합니다. 눈으로는 차이가 거의 없습니다.
+      용량을 줄이고 싶으면 <b>모두 JPG로</b>나 <b>긴 변 줄이기</b>를 고르세요.
+      아이폰 사파리는 한 장이 1,600만 화소를 넘으면 그림을 만들지 못해서, 그보다 큰 사진은 <b>그 안으로 줄여서</b> 저장합니다.</p>
+  </details>
+
+  <details>
+    <summary>PDF는 어떻게 들어가나요? 글자 검색은 되나요?</summary>
+    <p>쪽마다 <b>투명한 워터마크 그림을 맨 위에 한 겹</b> 얹습니다. 원래 글자·표·그림은 그대로 두므로 <b>검색·복사가 그대로 되고</b>, 책갈피·링크도 남습니다.
+      쪽이 가로로 돌아가 있어도 보이는 방향에 맞춰 넣습니다. 다만 <b>전자서명은 무효</b>가 됩니다(파일이 바뀌면 깨지도록 만든 것이라 어떤 도구를 써도 같습니다).
+      PDF 미리보기는 첫 쪽의 대략적인 모습이고, 스캔한 PDF는 실제 스캔 그림 위에 보여 드립니다.</p>
+  </details>
+
+  <details>
+    <summary>암호·잠금이 걸린 PDF도 되나요?</summary>
+    <p><b>열 때 암호를 묻는 PDF</b>는 안 됩니다. 목록에 빨간 표시가 뜨니, 암호를 푼 사본으로 저장한 뒤 넣어 주세요.
+      반대로 <b>열리기는 하는데 인쇄·복사만 막아 둔 PDF</b>(공문서에 흔합니다)는 그대로 됩니다.
+      다만 결과 파일은 <b>그 잠금이 풀린 채로</b> 저장됩니다. 잠금이 다시 필요하면 저장한 뒤 새로 거세요.</p>
+  </details>
+
+  <details>
+    <summary>아이폰 사진(HEIC)도 되나요?</summary>
+    <p>아이폰 <b>사파리</b>에서는 HEIC도 바로 열립니다. 크롬·삼성 인터넷·PC에서는 HEIC를 열지 못하니,
+      먼저 JPG로 바꾸거나 아이폰 설정 → 카메라 → 포맷에서 <b>높은 호환성</b>을 고르세요. 결과는 JPG로 저장됩니다.</p>
+  </details>
+
+  <details>
+    <summary>네이버·카카오톡 앱에서 열었더니 저장이 안 돼요</summary>
+    <p>앱 안에서 열리는 화면(인앱 브라우저)은 <b>파일 내려받기 기능이 막혀 있습니다.</b>
+      그래서 앱 안에서 열면 안내 창이 먼저 뜹니다. <b>크롬에서 열기</b>(아이폰은 주소 복사 후 사파리)를 눌러
+      브라우저를 옮긴 다음 파일을 넣어 주세요.</p>
+  </details>
+
+  <details>
+    <summary>몇 장까지 한 번에 되나요?</summary>
+    <p>개수 제한은 두지 않았습니다. 한 장씩 차례로 처리하므로 수십 장도 됩니다.
+      다만 결과를 <b>메모리에 모았다가 ZIP으로</b> 묶기 때문에, 스마트폰에서는 <b>합쳐서 200MB 안쪽</b>을 권합니다.</p>
+  </details>
+</section>
+
+<!-- ══ 주의 문구 ══ -->
+<div class="nbx">
+  <div class="nbx-h"><span class="ic">!</span><span>저장하기 전에 확인하세요</span></div>
+  <ul>
+    <li><b>워터마크는 도용을 어렵게 할 뿐 완전히 막지는 못합니다.</b> 사진 편집·AI 지우개로 지워질 수 있고,
+      PDF 워터마크는 PDF 편집 프로그램으로 골라 지울 수 있습니다. 민감한 서류는 <b>꼭 필요한 곳에만</b> 보내세요.</li>
+    <li><b>워터마크는 개인정보를 가려 주지 않습니다.</b> 신분증 사본의 주민등록번호 뒷자리·주소, 통장 사본의 잔액처럼
+      필요 없는 정보는 따로 가려야 합니다. 제출처가 <b>원본과 같은 사본</b>을 요구하거나 워터마크를 금지하는 경우도 있으니
+      <b>제출처 안내를 먼저 확인</b>하세요.</li>
+    <li>사진은 새로 저장되며 원본을 덮어쓰지 않습니다. 저장한 뒤 <b>글자·얼굴·숫자가 알아보이는지</b> 직접 확인하고,
+      <b>원본은 따로 보관</b>하세요. 남이 찍은 사진·남의 로고에 워터마크를 넣는다고 저작권이 생기지는 않습니다.</li>
+  </ul>
+  <p class="nbx-f">이 도구는 <b>있는 그대로 제공되며</b>, 이를 사용해 만든 파일로 발생한
+    어떠한 손해에 대해서도 <b>제작자와 운영자는 법적 책임을 지지 않습니다.</b></p>
+</div>
+
+<footer>
+  <b>워터마크 넣기</b> · 업로드 없이 브라우저에서 처리<br>
+  사진은 브라우저 내장 Canvas로 다시 그리고, PDF는 ISO 32000 구조를 직접 해석해 쪽마다 투명 그림 한 겹을 얹습니다<br>
+  압축/해제는 CompressionStream · ZIP은 직접 묶음 · 외부 라이브러리 없음<br>
+  파일은 어디에도 전송되지 않으며, 페이지를 연 뒤에는 인터넷 없이도 동작합니다.
+</footer>
+</div>
+
+<!-- 앱 안(네이버·카카오톡 등)에서 열렸을 때 사용을 막는 창.
+     WebView 는 파일 내려받기를 못 해서, 다 만들어도 저장이 안 된다 -->
+<div class="iamodal" id="iaModal" role="dialog" aria-modal="true" aria-labelledby="iaTitle">
+  <div class="iasheet">
+    <div class="iaic">📱</div>
+    <h2 id="iaTitle">앱 안에서는 워터마크 넣은 파일이 저장되지 않습니다</h2>
+    <p class="iap" id="iaDesc"></p>
+    <ol class="iasteps" id="iaSteps"></ol>
+    <button class="iabtn" id="iaGo2" type="button">크롬에서 열기</button>
+    <p class="iafine"><button type="button" id="iaStay">저장은 안 해도 돼요 · 그냥 볼게요</button></p>
+  </div>
+</div>
+
+<!-- 광고 자리 ⑤ 하단 오버형 320×50(모바일) — 읽는 구간에서만 올라오고, 입력 중·미리보기 중·창이 열렸을 때는
+     내려가 있습니다. 바 높이만큼 본문 아래 여백을 늘려 아무것도 가리지 않습니다 -->
+<div id="anchor"><span class="amk">광고</span><div class="ad-slot" id="ad-anchor"></div>
+  <button class="axl" id="anchorX" type="button" aria-label="광고 닫기">✕</button></div>
+
+<div id="mbar"><div class="in"><canvas id="mbarPv" class="hide" width="10" height="10" aria-label="작은 미리보기"></canvas><div class="k">미리보기 · 저장<b id="mbarTxt">워터마크 넣은 모습</b></div><button class="go" id="mbarGo" type="button">미리보기 ↓</button></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+"use strict";
+/* ══════════════════════════════════════════════════════════════
+   워터마크 넣기 — 라이브러리 없이 순수 JS
+
+   [사진]  캔버스에 원본을 그리고 워터마크를 그 위에 그려 새 그림으로 저장한다.
+           크기·간격은 전부 「짧은 변 대비 %」라서 미리보기(작은 캔버스)와 저장본(원본 크기)이
+           똑같은 모양으로 나온다. 가로·세로 사진이 섞여도 워터마크 크기가 고르다.
+   [PDF]   원래 글자·그림은 그대로 두고, 쪽마다 투명 그림(워터마크) 한 겹을 맨 위에 얹는다.
+           원래 내용은 q … Q 로 감싸 두어, 원래 콘텐츠가 좌표계를 바꿔 놓고 끝나도 워터마크 위치가 틀어지지 않는다.
+           /Rotate 로 돌아간 쪽은 보이는 방향에 맞춰 그림을 거꾸로 돌려 넣는다.
+   [PDF 파서·재조립은 pdf_compress 와 같은 것]
+           xref 를 믿지 않고 파일 전체를 훑은 뒤 ObjStm 을 푼다. 쓰기는 카탈로그에서 참조 그래프를
+           통째로 복사하므로 책갈피·링크·양식이 남는다.
+   ══════════════════════════════════════════════════════════════ */
+/* ── 바이트 유틸 ────────────────────────────────── */
+const WS = new Uint8Array(256), DELIM = new Uint8Array(256);
+for (const c of [0, 9, 10, 12, 13, 32]) WS[c] = 1;
+for (const c of '()<>[]{}/%') DELIM[c.charCodeAt(0)] = 1;
+const isWS = c => WS[c] === 1;
+const isDelim = c => DELIM[c] === 1;
+const isReg = c => !WS[c] && !DELIM[c];
+
+function findAll(buf, pat, from = 0) {
+  const out = [], p = typeof pat === 'string' ? new TextEncoder().encode(pat) : pat;
+  let i = from;
+  for (;;) {
+    i = indexOfBytes(buf, p, i);
+    if (i < 0) break;
+    out.push(i); i += 1;
+  }
+  return out;
+}
+function indexOfBytes(buf, pat, from = 0) {
+  const n = buf.length, m = pat.length, first = pat[0];
+  outer: for (let i = Math.max(0, from); i <= n - m; i++) {
+    if (buf[i] !== first) continue;
+    for (let j = 1; j < m; j++) if (buf[i + j] !== pat[j]) continue outer;
+    return i;
+  }
+  return -1;
+}
+function lastIndexOfBytes(buf, pat, from) {
+  const m = pat.length;
+  outer: for (let i = Math.min(from, buf.length - m); i >= 0; i--) {
+    for (let j = 0; j < m; j++) if (buf[i + j] !== pat[j]) continue outer;
+    return i;
+  }
+  return -1;
+}
+const ENC = new TextEncoder();
+
+/* ── 압축 해제 ──────────────────────────────────── */
+async function inflate(bytes) {
+  const tryOne = async (fmt) => {
+    const ds = new DecompressionStream(fmt);
+    const w = ds.writable.getWriter();
+    w.write(bytes); w.close();
+    const parts = []; let total = 0;
+    const rd = ds.readable.getReader();
+    for (;;) {
+      const { done, value } = await rd.read();
+      if (done) break;
+      parts.push(value); total += value.length;
+    }
+    const out = new Uint8Array(total); let o = 0;
+    for (const p of parts) { out.set(p, o); o += p.length; }
+    return out;
+  };
+  try { return await tryOne('deflate'); }
+  catch (e) { return await tryOne('deflate-raw'); }
+}
+
+/* PNG 예측기(Predictor 10~15) 되돌리기 — xref 스트림과 일부 ObjStm 이 쓴다 */
+function unpredict(data, pred, colors, bpc, columns) {
+  if (pred < 10) return data;
+  const bpp = Math.max(1, (colors * bpc) >> 3);
+  const rowLen = Math.ceil(colors * bpc * columns / 8);
+  const rows = Math.floor(data.length / (rowLen + 1));
+  const out = new Uint8Array(rows * rowLen);
+  let prev = new Uint8Array(rowLen);
+  for (let r = 0; r < rows; r++) {
+    const ft = data[r * (rowLen + 1)];
+    const src = data.subarray(r * (rowLen + 1) + 1, r * (rowLen + 1) + 1 + rowLen);
+    const cur = new Uint8Array(rowLen);
+    for (let i = 0; i < rowLen; i++) {
+      const a = i >= bpp ? cur[i - bpp] : 0, b = prev[i], c = i >= bpp ? prev[i - bpp] : 0;
+      let v = src[i];
+      if (ft === 1) v += a;
+      else if (ft === 2) v += b;
+      else if (ft === 3) v += (a + b) >> 1;
+      else if (ft === 4) {
+        const p = a + b - c, pa = Math.abs(p - a), pb = Math.abs(p - b), pc = Math.abs(p - c);
+        v += (pa <= pb && pa <= pc) ? a : (pb <= pc ? b : c);
+      }
+      cur[i] = v & 255;
+    }
+    out.set(cur, r * rowLen); prev = cur;
+  }
+  return out;
+}
+
+/* ── 객체 모델 ─────────────────────────────────── */
+// {t:'num',s} {t:'str',b,hex} {t:'name',s} {t:'bool',v} {t:'null'}
+// {t:'ref',n,g} {t:'arr',v:[]} {t:'dict',m:[[name,val]…]} {t:'stream',d:dict,data}
+
+class Lexer {
+  constructor(buf, pos = 0) { this.b = buf; this.p = pos; }
+  skip() {
+    const b = this.b;
+    for (;;) {
+      while (this.p < b.length && isWS(b[this.p])) this.p++;
+      if (b[this.p] === 0x25) { // %
+        while (this.p < b.length && b[this.p] !== 10 && b[this.p] !== 13) this.p++;
+      } else return;
+    }
+  }
+  parse() {
+    this.skip();
+    const b = this.b, c = b[this.p];
+    if (this.p >= b.length) return { t: 'null' };
+    if (c === 0x2f) return this.name();
+    if (c === 0x28) return this.litStr();
+    if (c === 0x3c) {
+      if (b[this.p + 1] === 0x3c) return this.dict();
+      return this.hexStr();
+    }
+    if (c === 0x5b) return this.arr();
+    if (c === 0x5d || c === 0x3e || c === 0x7d || c === 0x29) { this.p++; return { t: 'null' }; }
+    // 키워드 / 숫자
+    const s = this.token();
+    if (s === 'true') return { t: 'bool', v: true };
+    if (s === 'false') return { t: 'bool', v: false };
+    if (s === 'null' || s === '') return { t: 'null' };
+    if (/^[+-]?[\d.]+$/.test(s)) {
+      // "N G R" 참조인지 앞을 내다본다
+      if (/^\d+$/.test(s)) {
+        const save = this.p;
+        this.skip(); const p2 = this.p; const s2 = this.token();
+        if (/^\d+$/.test(s2)) {
+          this.skip(); const s3 = this.token();
+          if (s3 === 'R') return { t: 'ref', n: parseInt(s, 10), g: parseInt(s2, 10) };
+        }
+        this.p = save;
+      }
+      return { t: 'num', s };
+    }
+    return { t: 'kw', s };
+  }
+  token() {
+    const b = this.b, st = this.p;
+    while (this.p < b.length && isReg(b[this.p])) this.p++;
+    if (this.p === st) { this.p++; return String.fromCharCode(b[st]); }
+    let s = '';
+    for (let i = st; i < this.p; i++) s += String.fromCharCode(b[i]);
+    return s;
+  }
+  name() {
+    const b = this.b, st = this.p; this.p++;
+    while (this.p < b.length && isReg(b[this.p])) this.p++;
+    let s = '';
+    for (let i = st; i < this.p; i++) s += String.fromCharCode(b[i]);
+    return { t: 'name', s };
+  }
+  litStr() {
+    const b = this.b; this.p++;
+    const out = []; let depth = 1;
+    while (this.p < b.length) {
+      const c = b[this.p];
+      if (c === 0x5c) { out.push(c); this.p++; if (this.p < b.length) { out.push(b[this.p]); this.p++; } continue; }
+      if (c === 0x28) depth++;
+      if (c === 0x29) { depth--; if (depth === 0) { this.p++; break; } }
+      out.push(c); this.p++;
+    }
+    return { t: 'str', b: Uint8Array.from(out), hex: false };
+  }
+  hexStr() {
+    const b = this.b; this.p++;
+    const out = [];
+    while (this.p < b.length && b[this.p] !== 0x3e) { out.push(b[this.p]); this.p++; }
+    this.p++;
+    return { t: 'str', b: Uint8Array.from(out), hex: true };
+  }
+  arr() {
+    const b = this.b; this.p++;
+    const v = [];
+    for (;;) {
+      this.skip();
+      if (this.p >= b.length) break;
+      if (b[this.p] === 0x5d) { this.p++; break; }
+      const before = this.p;
+      const x = this.parse();
+      if (this.p === before) { this.p++; continue; }
+      if (x.t === 'kw') continue;
+      v.push(x);
+    }
+    return { t: 'arr', v };
+  }
+  dict() {
+    const b = this.b; this.p += 2;
+    const m = [];
+    for (;;) {
+      this.skip();
+      if (this.p >= b.length) break;
+      if (b[this.p] === 0x3e && b[this.p + 1] === 0x3e) { this.p += 2; break; }
+      if (b[this.p] !== 0x2f) { // 이름이 아니면 한 칸 건너뛴다(깨진 사전 방어)
+        const before = this.p; this.parse();
+        if (this.p === before) this.p++;
+        continue;
+      }
+      const k = this.name().s;
+      const v = this.parse();
+      m.push([k, v.t === 'kw' ? { t: 'null' } : v]);
+    }
+    return { t: 'dict', m };
+  }
+}
+
+const dget = (d, k) => {
+  if (!d || d.t !== 'dict') return null;
+  for (const [kk, vv] of d.m) if (kk === k) return vv;
+  return null;
+};
+const dset = (d, k, v) => {
+  for (const e of d.m) if (e[0] === k) { e[1] = v; return; }
+  d.m.push([k, v]);
+};
+const ddel = (d, k) => { d.m = d.m.filter(e => e[0] !== k); };
+const numv = x => (x && x.t === 'num') ? parseFloat(x.s) : null;
+
+/* ── 직렬화 ────────────────────────────────────── */
+function ser(x, out) {
+  switch (x.t) {
+    case 'num': out.push(ENC.encode(x.s)); break;
+    case 'bool': out.push(ENC.encode(x.v ? 'true' : 'false')); break;
+    case 'null': out.push(ENC.encode('null')); break;
+    case 'name': out.push(ENC.encode(x.s)); break;
+    case 'ref': out.push(ENC.encode(x.n + ' ' + x.g + ' R')); break;
+    case 'str':
+      if (x.hex) { out.push(ENC.encode('<')); out.push(x.b); out.push(ENC.encode('>')); }
+      else { out.push(ENC.encode('(')); out.push(x.b); out.push(ENC.encode(')')); }
+      break;
+    case 'arr':
+      out.push(ENC.encode('['));
+      x.v.forEach((e, i) => { if (i) out.push(ENC.encode(' ')); ser(e, out); });
+      out.push(ENC.encode(']'));
+      break;
+    case 'dict':
+      out.push(ENC.encode('<<'));
+      for (const [k, v] of x.m) { out.push(ENC.encode(k + ' ')); ser(v, out); out.push(ENC.encode(' ')); }
+      out.push(ENC.encode('>>'));
+      break;
+    case 'stream':
+      ser(x.d, out);
+      out.push(ENC.encode('\nstream\n'));
+      out.push(x.data);
+      out.push(ENC.encode('\nendstream'));
+      break;
+    default: out.push(ENC.encode('null'));
+  }
+}
+
+/* ── 문서 읽기 ─────────────────────────────────── */
+class PDFDoc {
+  constructor(bytes, name) { this.b = bytes; this.name = name; this.objs = new Map(); }
+
+  static async load(bytes, name) {
+    const d = new PDFDoc(bytes, name);
+    if (indexOfBytes(bytes, ENC.encode('%PDF-'), 0) < 0 || bytes.length < 32)
+      throw new Error('PDF 파일이 아닙니다');
+    d.scan();
+    if (d.isEncrypted()) await unlockDoc(d);    /* 권한 잠금만 걸린 PDF 는 풀고 진행 — ObjStm 을 펴기 전에 해야 한다 */
+    await d.expandObjStms();
+    d.findRoot();
+    return d;
+  }
+
+  isEncrypted() {
+    // trailer 나 xref 스트림 사전에 /Encrypt 가 있으면 암호화
+    const pos = findAll(this.b, 'trailer');
+    for (const p of pos) {
+      const lx = new Lexer(this.b, p + 7);
+      const t = lx.parse();
+      if (dget(t, '/Encrypt')) return true;
+    }
+    return indexOfBytes(this.b, ENC.encode('/Encrypt')) >= 0
+        && indexOfBytes(this.b, ENC.encode('/Type /XRef')) < 0
+        ? true
+        : this.encryptInXrefStream();
+  }
+  encryptInXrefStream() {
+    const p = indexOfBytes(this.b, ENC.encode('/Encrypt'));
+    if (p < 0) return false;
+    // 객체 스캔 전이므로 보수적으로: /Encrypt 뒤가 참조면 암호화로 본다
+    const lx = new Lexer(this.b, p + 8);
+    const v = lx.parse();
+    return v.t === 'ref' || v.t === 'dict';
+  }
+
+  /* 파일 전체를 순차로 훑어 "N G obj … " 를 모두 찾는다. 뒤에 나온 것이 이긴다. */
+  scan() {
+    const b = this.b, n = b.length;
+    let i = 0;
+    while (i < n - 3) {
+      // 'obj' 찾기
+      const j = indexOfBytes(b, ENC.encode('obj'), i);
+      if (j < 0) break;
+      // 앞이 "N G " 형태인지
+      let k = j - 1;
+      while (k >= 0 && isWS(b[k])) k--;
+      let ge = k + 1; while (k >= 0 && b[k] >= 48 && b[k] <= 57) k--;
+      const gs = k + 1;
+      if (gs === ge) { i = j + 3; continue; }
+      while (k >= 0 && isWS(b[k])) k--;
+      let ne = k + 1; while (k >= 0 && b[k] >= 48 && b[k] <= 57) k--;
+      const ns = k + 1;
+      if (ns === ne) { i = j + 3; continue; }
+      if (ns > 0 && isReg(b[ns - 1])) { i = j + 3; continue; }
+      let numS = '', genS = '';
+      for (let t = ns; t < ne; t++) numS += String.fromCharCode(b[t]);
+      for (let t = gs; t < ge; t++) genS += String.fromCharCode(b[t]);
+      const num = parseInt(numS, 10), gen = parseInt(genS, 10);
+      if (!isFinite(num)) { i = j + 3; continue; }
+
+      const lx = new Lexer(b, j + 3);
+      let val;
+      try { val = lx.parse(); } catch (e) { i = j + 3; continue; }
+      let end = lx.p;
+
+      // 스트림인가?
+      lx.skip();
+      if (b[lx.p] === 0x73 && b[lx.p+1] === 0x74 && b[lx.p+2] === 0x72 &&
+          b[lx.p+3] === 0x65 && b[lx.p+4] === 0x61 && b[lx.p+5] === 0x6d && val.t === 'dict') {
+        let ds = lx.p + 6;
+        if (b[ds] === 13) ds++;
+        if (b[ds] === 10) ds++;
+        let len = null;
+        const L = dget(val, '/Length');
+        if (L && L.t === 'num') len = parseInt(L.s, 10);
+        let de = -1;
+        if (len !== null && ds + len <= n) {
+          // /Length 를 믿되 endstream 이 실제로 뒤따르는지 확인
+          const probe = new Lexer(b, ds + len); probe.skip();
+          if (indexOfBytes(b, ENC.encode('endstream'), probe.p) === probe.p) de = ds + len;
+        }
+        if (de < 0) {
+          de = indexOfBytes(b, ENC.encode('endstream'), ds);
+          if (de < 0) { i = j + 3; continue; }
+          let e2 = de;
+          if (b[e2 - 1] === 10) e2--;
+          if (b[e2 - 1] === 13) e2--;
+          de = e2;
+        }
+        val = { t: 'stream', d: val, data: b.subarray(ds, de) };
+        end = indexOfBytes(b, ENC.encode('endstream'), de);
+        end = end < 0 ? de : end + 9;
+      }
+      this.objs.set(num, { gen, v: val, off: ns });
+      i = Math.max(end, j + 3);
+    }
+  }
+
+  /* /ObjStm 안에 든 객체들을 꺼내 목록에 더한다 (실제 PDF의 90%가 이걸 쓴다) */
+  async expandObjStms() {
+    const stms = [];
+    for (const [num, o] of this.objs) {
+      if (o.v.t === 'stream') {
+        const ty = dget(o.v.d, '/Type');
+        if (ty && ty.t === 'name' && ty.s === '/ObjStm') stms.push([o.off || 0, o.v]);
+      }
+    }
+    for (const [stOff, st] of stms) {
+      let data;
+      try { data = await this.decodeStream(st); } catch (e) { continue; }
+      const N = numv(dget(st.d, '/N')), First = numv(dget(st.d, '/First'));
+      if (!N || First === null) continue;
+      const head = new Lexer(data, 0);
+      const pairs = [];
+      for (let k = 0; k < N; k++) {
+        head.skip(); const a = head.token();
+        head.skip(); const b2 = head.token();
+        const nn = parseInt(a, 10), off = parseInt(b2, 10);
+        if (!isFinite(nn) || !isFinite(off)) break;
+        pairs.push([nn, off]);
+      }
+      for (const [nn, off] of pairs) {
+        // 같은 번호가 이미 있으면 '파일에서 더 뒤에 놓인 쪽'이 최신이다.
+        // 증분 업데이트(실제 PDF의 23%)에서 본문 추가분과 ObjStm 갱신분이 섞이는 경우를 가른다.
+        const prev = this.objs.get(nn);
+        if (prev && (prev.off || 0) > stOff) continue;
+        try {
+          const lx = new Lexer(data, First + off);
+          this.objs.set(nn, { gen: 0, v: lx.parse(), off: stOff });
+        } catch (e) { /* 무시 */ }
+      }
+    }
+  }
+
+  async decodeStream(st) {
+    let data = st.data;
+    let filt = dget(st.d, '/Filter');
+    let parms = dget(st.d, '/DecodeParms') || dget(st.d, '/DP');
+    if (!filt) return data;
+    const filters = filt.t === 'arr' ? filt.v : [filt];
+    const parmList = parms ? (parms.t === 'arr' ? parms.v : [parms]) : [];
+    for (let i = 0; i < filters.length; i++) {
+      const f = filters[i];
+      if (f.t !== 'name') continue;
+      if (f.s === '/FlateDecode' || f.s === '/Fl') {
+        data = await inflate(data);
+        const pm = this.resolve(parmList[i] || (filters.length === 1 ? parmList[0] : null));
+        if (pm && pm.t === 'dict') {
+          const pred = numv(dget(pm, '/Predictor')) || 1;
+          if (pred >= 10) {
+            data = unpredict(data, pred,
+              numv(dget(pm, '/Colors')) || 1,
+              numv(dget(pm, '/BitsPerComponent')) || 8,
+              numv(dget(pm, '/Columns')) || 1);
+          }
+        }
+      } else if (f.s === '/ASCIIHexDecode' || f.s === '/AHx') {
+        const out = []; let hi = -1;
+        for (const c of data) {
+          let v = -1;
+          if (c >= 48 && c <= 57) v = c - 48;
+          else if (c >= 97 && c <= 102) v = c - 87;
+          else if (c >= 65 && c <= 70) v = c - 55;
+          else if (c === 0x3e) break; else continue;
+          if (hi < 0) hi = v; else { out.push(hi * 16 + v); hi = -1; }
+        }
+        if (hi >= 0) out.push(hi * 16);
+        data = Uint8Array.from(out);
+      } else {
+        throw new Error('지원하지 않는 필터 ' + f.s);
+      }
+    }
+    return data;
+  }
+
+  resolve(x) {
+    let guard = 0;
+    while (x && x.t === 'ref' && guard++ < 64) {
+      const o = this.objs.get(x.n);
+      x = o ? o.v : null;
+    }
+    return x;
+  }
+
+  findRoot() {
+    // 1) trailer 사전들 중 마지막 /Root
+    const pos = findAll(this.b, 'trailer');
+    for (let i = pos.length - 1; i >= 0; i--) {
+      const t = new Lexer(this.b, pos[i] + 7).parse();
+      const r = dget(t, '/Root');
+      if (r) { this.root = this.resolve(r); if (this.root) return; }
+    }
+    // 2) xref 스트림 사전의 /Root
+    for (const [, o] of this.objs) {
+      if (o.v.t === 'stream') {
+        const ty = dget(o.v.d, '/Type');
+        if (ty && ty.s === '/XRef') {
+          const r = dget(o.v.d, '/Root');
+          if (r) { this.root = this.resolve(r); if (this.root) return; }
+        }
+      }
+    }
+    // 3) /Type /Catalog 직접 찾기
+    for (const [, o] of this.objs) {
+      const d = o.v.t === 'dict' ? o.v : null;
+      if (d) { const ty = dget(d, '/Type'); if (ty && ty.s === '/Catalog') { this.root = d; return; } }
+    }
+    throw new Error('문서 구조(Catalog)를 찾지 못했습니다');
+  }
+
+  /* 페이지 트리를 훑어 페이지 객체 목록을 만든다. 상속 속성은 여기서 확정한다. */
+  pages() {
+    const INHERIT = ['/Resources', '/MediaBox', '/CropBox', '/Rotate'];
+    const out = [];
+    const seen = new Set();
+    const walk = (node, inh, depth) => {
+      node = this.resolve(node);
+      if (!node || depth > 64 || out.length > 20000) return;
+      const d = node.t === 'stream' ? node.d : node;
+      if (d.t !== 'dict') return;
+      const inh2 = Object.assign({}, inh);
+      for (const k of INHERIT) { const v = dget(d, k); if (v) inh2[k] = v; }
+      const ty = dget(d, '/Type');
+      const kids = dget(d, '/Kids');
+      if (kids && (!ty || ty.s !== '/Page')) {
+        const arr = this.resolve(kids);
+        if (arr && arr.t === 'arr') {
+          for (const k of arr.v) {
+            const key = k.t === 'ref' ? 'r' + k.n : null;
+            if (key) { if (seen.has(key)) continue; seen.add(key); }
+            walk(k, inh2, depth + 1);
+          }
+        }
+        return;
+      }
+      if (ty && ty.s === '/Page') out.push({ dict: d, inh: inh2 });
+    };
+    const rootPages = dget(this.root, '/Pages');
+    if (rootPages) walk(rootPages, {}, 0);
+    if (!out.length) {
+      // 페이지 트리가 깨진 경우: /Type /Page 를 직접 긁는다
+      for (const [, o] of this.objs) {
+        const d = o.v.t === 'dict' ? o.v : null;
+        if (d) { const ty = dget(d, '/Type'); if (ty && ty.s === '/Page') out.push({ dict: d, inh: {} }); }
+      }
+    }
+    return out;
+  }
+}
+
+
+/* ── 압축(Deflate) ────────────────────────────────
+   해제와 마찬가지로 브라우저 내장 스트림을 쓴다. 외부 라이브러리 없음. */
+async function deflateBytes(bytes) {
+  const cs = new CompressionStream('deflate');
+  const w = cs.writable.getWriter();
+  w.write(bytes); w.close();
+  const parts = []; let total = 0;
+  const rd = cs.readable.getReader();
+  for (;;) {
+    const { done, value } = await rd.read();
+    if (done) break;
+    parts.push(value); total += value.length;
+  }
+  const out = new Uint8Array(total); let o = 0;
+  for (const p of parts) { out.set(p, o); o += p.length; }
+  return out;
+}
+function concatBytes(parts) {
+  let n = 0; for (const p of parts) n += p.length;
+  const out = new Uint8Array(n); let o = 0;
+  for (const p of parts) { out.set(p, o); o += p.length; }
+  return out;
+}
+function serBytes(v) { const parts = []; ser(v, parts); return concatBytes(parts); }
+/* ── 다시 쓰기 ─────────────────────────────────────
+   카탈로그에서 시작해 참조를 따라가며 그래프를 그대로 옮긴다.
+   재귀가 아니라 큐로 도는 이유: 책갈피처럼 /Next 로 수천 개가 이어진 문서에서
+   재귀로 내려가면 호출 스택이 넘친다.                                    */
+async function rebuild(doc, rootNum, infoNum, repl, opt) {
+  const outObjs = [];
+  const alloc = () => { outObjs.push(null); return outObjs.length; };
+  const map = new Map();
+  const queue = [];
+  const mapRef = (n) => {
+    let nn = map.get(n);
+    if (nn !== undefined) return nn;
+    nn = alloc(); map.set(n, nn); queue.push([nn, n]);
+    return nn;
+  };
+  const DROP = opt.stripMeta ? new Set(['/Metadata', '/PieceInfo']) : null;
+  const shallow = (v, depth) => {
+    if (!v || depth > 64) return { t: 'null' };
+    switch (v.t) {
+      case 'ref': return { t: 'ref', n: mapRef(v.n), g: 0 };
+      case 'arr': return { t: 'arr', v: v.v.map(e => shallow(e, depth + 1)) };
+      case 'dict': {
+        const m = [];
+        for (const [k, e] of v.m) {
+          if (k === '/Length') continue;                 // 항상 새로 적는다(간접 참조 제거)
+          if (DROP && DROP.has(k)) continue;
+          m.push([k, shallow(e, depth + 1)]);
+        }
+        return { t: 'dict', m };
+      }
+      case 'stream': {
+        const m = [];
+        for (const [k, e] of v.d.m) {
+          if (k === '/Length') continue;
+          if (DROP && DROP.has(k)) continue;
+          m.push([k, shallow(e, depth + 1)]);
+        }
+        return { t: 'stream', d: { t: 'dict', m }, data: v.data };
+      }
+      default: return v;
+    }
+  };
+
+  const newRoot = mapRef(rootNum);
+  const newInfo = (!opt.stripMeta && infoNum) ? mapRef(infoNum) : 0;
+  while (queue.length) {
+    const [nn, srcNum] = queue.shift();
+    const rp = repl.get(srcNum);
+    if (rp) { outObjs[nn - 1] = { t: 'stream', d: shallow(rp.d, 0), data: rp.data }; continue; }
+    const src = doc.objs.get(srcNum);
+    outObjs[nn - 1] = src ? shallow(src.v, 0) : { t: 'null' };
+  }
+
+  /* 압축이 안 걸린 스트림은 눌러 담는다 */
+  for (let i = 0; i < outObjs.length; i++) {
+    const o = outObjs[i];
+    if (!o || o.t !== 'stream') continue;
+    if (dget(o.d, '/Filter')) continue;
+    if (o.data.length < 80) continue;
+    try {
+      const z = await deflateBytes(o.data);
+      if (z.length < o.data.length) { o.data = z; dset(o.d, '/Filter', { t: 'name', s: '/FlateDecode' }); }
+    } catch (e) { /* 그대로 둔다 */ }
+  }
+
+  const st2 = dedupStreams(outObjs, [newRoot, newInfo]);
+  return await serializeDoc(st2.objs, st2.refs[0], st2.refs[1]);
+}
+
+/* 같은 내용의 스트림이 여러 벌 들어 있으면 하나로 합친다.
+   합친 PDF·워드 문서에서 같은 로고·글꼴이 페이지마다 따로 들어 있는 경우가 있다. */
+function hashBytes(b) {
+  let h = 0x811c9dc5;
+  const step = b.length > 4096 ? Math.max(1, Math.floor(b.length / 2048)) : 1;
+  for (let i = 0; i < b.length; i += step) { h ^= b[i]; h = (h * 0x01000193) >>> 0; }
+  for (let i = Math.max(0, b.length - 64); i < b.length; i++) { h ^= b[i]; h = (h * 0x01000193) >>> 0; }
+  return h >>> 0;
+}
+function sameBytes(a, b) {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+  return true;
+}
+function dedupStreams(objs, keepRefs) {
+  const M = objs.length;
+  const canon = new Int32Array(M + 1);
+  for (let i = 0; i <= M; i++) canon[i] = i;
+  const buckets = new Map();
+  for (let i = 1; i <= M; i++) {
+    const o = objs[i - 1];
+    if (!o || o.t !== 'stream' || o.data.length < 512) continue;
+    const key = o.data.length + ':' + hashBytes(o.data);
+    let arr = buckets.get(key);
+    if (!arr) { buckets.set(key, [i]); continue; }
+    let hit = 0;
+    const ds = serBytes(o.d);
+    for (const j of arr) {
+      const p = objs[j - 1];
+      if (sameBytes(p.data, o.data) && sameBytes(serBytes(p.d), ds)) { hit = j; break; }
+    }
+    if (hit) { canon[i] = hit; objs[i - 1] = null; } else arr.push(i);
+  }
+  /* 번호를 다시 촘촘하게 매기고 참조를 고쳐 쓴다 */
+  const final = new Int32Array(M + 1);
+  const out = [];
+  for (let i = 1; i <= M; i++) if (canon[i] === i && objs[i - 1]) { out.push(objs[i - 1]); final[i] = out.length; }
+  const fix = (v, depth) => {
+    if (!v || depth > 64) return;
+    if (v.t === 'ref') { v.n = final[canon[v.n]] || 0; return; }
+    if (v.t === 'arr') { for (const e of v.v) fix(e, depth + 1); return; }
+    if (v.t === 'dict') { for (const [, e] of v.m) fix(e, depth + 1); return; }
+    if (v.t === 'stream') { fix(v.d, depth + 1); return; }
+  };
+  for (const o of out) fix(o, 0);
+  return { objs: out, refs: keepRefs.map(r => (r ? (final[canon[r]] || 0) : 0)) };
+}
+
+/* ── 파일로 쓰기 ───────────────────────────────────
+   스트림이 아닌 객체는 객체 스트림(/ObjStm)에 몰아넣고 교차참조도 스트림으로 쓴다.
+   원본의 90%가 이미 이 방식이라, 옛 방식(xref 표)으로 쓰면 구조만으로 파일이 커진다. */
+async function serializeDoc(objs, rootNum, infoNum) {
+  const M = objs.length;
+  if (!M || !rootNum) throw new Error('문서 구조를 다시 만들지 못했습니다');
+  const isStream = i => objs[i - 1] && objs[i - 1].t === 'stream';
+
+  const groups = [];
+  let cur = [], curLen = 0;
+  for (let i = 1; i <= M; i++) {
+    if (!objs[i - 1] || isStream(i)) continue;
+    const b = serBytes(objs[i - 1]);
+    if (cur.length >= 160 || curLen + b.length > 300000) { groups.push(cur); cur = []; curLen = 0; }
+    cur.push([i, b]); curLen += b.length + 14;
+  }
+  if (cur.length) groups.push(cur);
+
+  const stmNum = [];
+  for (let g = 0; g < groups.length; g++) stmNum.push(M + 1 + g);
+  const xrefNum = M + groups.length + 1;
+  const maxNum = xrefNum;
+
+  const loc = new Array(maxNum + 1).fill(null);       // {t:1,off} 또는 {t:2,s,i}
+  const chunks = []; let len = 0;
+  const push = b => { chunks.push(b); len += b.length; };
+  push(ENC.encode('%PDF-1.7\n%\xE2\xE3\xCF\xD3\n'));
+
+  const writeObj = (num, val) => {
+    loc[num] = { t: 1, off: len };
+    push(ENC.encode(num + ' 0 obj\n'));
+    const parts = []; ser(val, parts);
+    for (const p of parts) push(p);
+    push(ENC.encode('\nendobj\n'));
+  };
+
+  for (let i = 1; i <= M; i++) {
+    if (!isStream(i)) continue;
+    const o = objs[i - 1];
+    dset(o.d, '/Length', { t: 'num', s: String(o.data.length) });
+    writeObj(i, o);
+  }
+  for (let g = 0; g < groups.length; g++) {
+    const list = groups[g];
+    let head = '', off = 0;
+    for (const [num, b] of list) { head += num + ' ' + off + ' '; off += b.length + 1; }
+    const headB = ENC.encode(head);
+    const body = [];
+    for (const [, b] of list) { body.push(b); body.push(ENC.encode('\n')); }
+    const raw = concatBytes([headB].concat(body));
+    let data = raw, filt = null;
+    try { const z = await deflateBytes(raw); if (z.length < raw.length) { data = z; filt = '/FlateDecode'; } } catch (e) {}
+    const d = { t: 'dict', m: [
+      ['/Type', { t: 'name', s: '/ObjStm' }],
+      ['/N', { t: 'num', s: String(list.length) }],
+      ['/First', { t: 'num', s: String(headB.length) }],
+      ['/Length', { t: 'num', s: String(data.length) }]
+    ] };
+    if (filt) dset(d, '/Filter', { t: 'name', s: filt });
+    writeObj(stmNum[g], { t: 'stream', d, data });
+    list.forEach(([num], idx) => { loc[num] = { t: 2, s: stmNum[g], i: idx }; });
+  }
+
+  /* 교차참조 스트림 — W [1 4 2] */
+  const rows = new Uint8Array((maxNum + 1) * 7);
+  const setRow = (n, a, b, c) => {
+    const o = n * 7;
+    rows[o] = a;
+    rows[o + 1] = (b >>> 24) & 255; rows[o + 2] = (b >>> 16) & 255; rows[o + 3] = (b >>> 8) & 255; rows[o + 4] = b & 255;
+    rows[o + 5] = (c >>> 8) & 255; rows[o + 6] = c & 255;
+  };
+  setRow(0, 0, 0, 65535);
+  for (let n = 1; n <= maxNum; n++) {
+    const L = loc[n];
+    if (!L) { setRow(n, 0, 0, 65535); continue; }
+    if (L.t === 1) setRow(n, 1, L.off, 0); else setRow(n, 2, L.s, L.i);
+  }
+  const xoff = len;
+  let xdata = rows, xfilt = null;
+  try { const z = await deflateBytes(rows); if (z.length < rows.length) { xdata = z; xfilt = '/FlateDecode'; } } catch (e) {}
+  const rnd = new Uint8Array(16);
+  (self.crypto && self.crypto.getRandomValues) ? self.crypto.getRandomValues(rnd) : rnd.forEach((v, i) => rnd[i] = (Math.random() * 256) | 0);
+  const hex = Array.from(rnd).map(v => v.toString(16).padStart(2, '0')).join('');
+  const xd = { t: 'dict', m: [
+    ['/Type', { t: 'name', s: '/XRef' }],
+    ['/Size', { t: 'num', s: String(maxNum + 1) }],
+    ['/W', { t: 'arr', v: [{ t: 'num', s: '1' }, { t: 'num', s: '4' }, { t: 'num', s: '2' }] }],
+    ['/Root', { t: 'ref', n: rootNum, g: 0 }],
+    ['/ID', { t: 'arr', v: [{ t: 'str', b: ENC.encode(hex), hex: true }, { t: 'str', b: ENC.encode(hex), hex: true }] }],
+    ['/Length', { t: 'num', s: String(xdata.length) }]
+  ] };
+  if (infoNum) dset(xd, '/Info', { t: 'ref', n: infoNum, g: 0 });
+  if (xfilt) dset(xd, '/Filter', { t: 'name', s: xfilt });
+  writeObj(xrefNum, { t: 'stream', d: xd, data: xdata });
+  push(ENC.encode('startxref\n' + xoff + '\n%%EOF\n'));
+
+  return concatBytes(chunks);
+}
+
+/* 카탈로그·문서정보의 객체 번호를 찾는다(참조를 새로 걸려면 번호가 필요하다) */
+function objNumOf(doc, val) {
+  if (!val) return 0;
+  for (const [n, o] of doc.objs) if (o.v === val) return n;
+  return 0;
+}
+function findInfoNum(doc) {
+  const pos = findAll(doc.b, 'trailer');
+  for (let i = pos.length - 1; i >= 0; i--) {
+    const t = new Lexer(doc.b, pos[i] + 7).parse();
+    const r = dget(t, '/Info');
+    if (r && r.t === 'ref') return r.n;
+  }
+  for (const [, o] of doc.objs) {
+    if (o.v.t === 'stream') {
+      const ty = dget(o.v.d, '/Type');
+      if (ty && ty.s === '/XRef') { const r = dget(o.v.d, '/Info'); if (r && r.t === 'ref') return r.n; }
+    }
+  }
+  return 0;
+}
+/* ══ 권한 잠금 PDF 풀기 — pdf_password 의 복호 코드를 그대로 가져왔다 ══
+   열 때 암호를 묻지 않는 PDF(인쇄·복사만 막은 공문서 등)는 빈 암호로 열쇠가 나온다. 그것만 받는다. */
+const SUB = (self.crypto && self.crypto.subtle) ? self.crypto.subtle : null;
+
+function cat(list) {
+  let n = 0; for (const a of list) n += a.length;
+  const o = new Uint8Array(n); let p = 0;
+  for (const a of list) { o.set(a, p); p += a.length; }
+  return o;
+}
+function rnd(n) {
+  const b = new Uint8Array(n);
+  if (self.crypto && self.crypto.getRandomValues) self.crypto.getRandomValues(b);
+  else for (let i = 0; i < n; i++) b[i] = (Math.random() * 256) | 0;
+  return b;
+}
+function eqN(a, b, n) {
+  if (!a || !b || a.length < n || b.length < n) return false;
+  for (let i = 0; i < n; i++) if (a[i] !== b[i]) return false;
+  return true;
+}
+function i32le(v) { return new Uint8Array([v & 255, (v >>> 8) & 255, (v >>> 16) & 255, (v >>> 24) & 255]); }
+function xorKey(key, x) { const o = new Uint8Array(key.length); for (let i = 0; i < key.length; i++) o[i] = key[i] ^ x; return o; }
+
+/* ── MD5 ── */
+const MD5_S = [7,12,17,22,7,12,17,22,7,12,17,22,7,12,17,22,
+               5, 9,14,20,5, 9,14,20,5, 9,14,20,5, 9,14,20,
+               4,11,16,23,4,11,16,23,4,11,16,23,4,11,16,23,
+               6,10,15,21,6,10,15,21,6,10,15,21,6,10,15,21];
+const MD5_K = new Uint32Array(64);
+for (let i = 0; i < 64; i++) MD5_K[i] = Math.floor(Math.abs(Math.sin(i + 1)) * 4294967296);
+
+function md5(msg) {
+  const len = msg.length;
+  const nBlk = Math.ceil((len + 9) / 64);
+  const total = nBlk * 64;
+  const buf = new Uint8Array(total);
+  buf.set(msg);
+  buf[len] = 0x80;
+  const dv = new DataView(buf.buffer);
+  const bits = len * 8;
+  dv.setUint32(total - 8, bits >>> 0, true);
+  dv.setUint32(total - 4, Math.floor(bits / 4294967296), true);
+
+  let a0 = 0x67452301, b0 = 0xefcdab89, c0 = 0x98badcfe, d0 = 0x10325476;
+  const M = new Uint32Array(16);
+  for (let blk = 0; blk < nBlk; blk++) {
+    for (let i = 0; i < 16; i++) M[i] = dv.getUint32(blk * 64 + i * 4, true);
+    let A = a0, B = b0, C = c0, D = d0;
+    for (let i = 0; i < 64; i++) {
+      let F, g;
+      if (i < 16)      { F = (B & C) | (~B & D);   g = i; }
+      else if (i < 32) { F = (D & B) | (~D & C);   g = (5 * i + 1) & 15; }
+      else if (i < 48) { F = B ^ C ^ D;            g = (3 * i + 5) & 15; }
+      else             { F = C ^ (B | ~D);         g = (7 * i) & 15; }
+      F = (F + A + MD5_K[i] + M[g]) >>> 0;
+      A = D; D = C; C = B;
+      const s = MD5_S[i];
+      B = (B + (((F << s) | (F >>> (32 - s))) >>> 0)) >>> 0;
+    }
+    a0 = (a0 + A) >>> 0; b0 = (b0 + B) >>> 0; c0 = (c0 + C) >>> 0; d0 = (d0 + D) >>> 0;
+  }
+  const out = new Uint8Array(16), ov = new DataView(out.buffer);
+  ov.setUint32(0, a0, true); ov.setUint32(4, b0, true); ov.setUint32(8, c0, true); ov.setUint32(12, d0, true);
+  return out;
+}
+
+/* ── RC4 ── */
+function rc4(key, data) {
+  const S = new Uint8Array(256);
+  for (let i = 0; i < 256; i++) S[i] = i;
+  const kl = key.length || 1;
+  let j = 0;
+  for (let i = 0; i < 256; i++) {
+    j = (j + S[i] + key[i % kl]) & 255;
+    const t = S[i]; S[i] = S[j]; S[j] = t;
+  }
+  const out = new Uint8Array(data.length);
+  let a = 0; j = 0;
+  for (let k = 0; k < data.length; k++) {
+    a = (a + 1) & 255;
+    j = (j + S[a]) & 255;
+    const t = S[a]; S[a] = S[j]; S[j] = t;
+    out[k] = data[k] ^ S[(S[a] + S[j]) & 255];
+  }
+  return out;
+}
+
+/* ── AES (WebCrypto) ──────────────────────────────
+   WebCrypto 의 AES-CBC 는 PKCS#7 패딩을 항상 붙이고 항상 검사한다.
+   그런데 PDF 의 열쇠 유도 과정(UE·OE·Perms·2.B 해시)은 "패딩 없는 CBC" 를 쓴다.
+   그래서 두 가지 우회를 쓴다.
+     · 패딩 없이 암호화 = 그냥 암호화한 뒤 뒤에 붙은 패딩 블록 한 개를 잘라 낸다
+     · 패딩 없이 복호화 = 마지막 블록으로 "패딩만 든 블록" 을 만들어 뒤에 붙인다.
+       브라우저가 그 블록을 패딩으로 보고 떼어 내므로 결과가 원본 그대로 남는다.
+   ══════════════════════════════════════════════════ */
+async function aesEnc(keyB, iv, data) {
+  const k = await SUB.importKey('raw', keyB, 'AES-CBC', false, ['encrypt']);
+  return new Uint8Array(await SUB.encrypt({ name: 'AES-CBC', iv }, k, data));
+}
+async function aesDec(keyB, iv, data) {
+  const k = await SUB.importKey('raw', keyB, 'AES-CBC', false, ['decrypt']);
+  return new Uint8Array(await SUB.decrypt({ name: 'AES-CBC', iv }, k, data));
+}
+async function aesEncRaw(keyB, iv, data) {
+  const full = await aesEnc(keyB, iv, data);
+  return full.subarray(0, data.length);
+}
+async function aesDecRaw(keyB, iv, data) {
+  if (!data.length) return new Uint8Array(0);
+  const last = data.slice(data.length - 16);
+  const tail = await aesEncRaw(keyB, last, new Uint8Array(16).fill(16));
+  const full = new Uint8Array(data.length + 16);
+  full.set(data); full.set(tail, data.length);
+  return await aesDec(keyB, iv, full);
+}
+/* 패딩이 규격대로 붙어 있지 않은 파일이 실제로 있다 → 실패하면 손으로 떼어 낸다 */
+async function aesDecPad(keyB, iv, data) {
+  try { return await aesDec(keyB, iv, data); }
+  catch (e) {
+    const raw = await aesDecRaw(keyB, iv, data);
+    const p = raw.length ? raw[raw.length - 1] : 0;
+    return (p >= 1 && p <= 16 && p <= raw.length) ? raw.subarray(0, raw.length - p) : raw;
+  }
+}
+async function sha(alg, data) { return new Uint8Array(await SUB.digest(alg, data)); }
+
+/* ── 알고리즘 2.B (R6 강화 해시) ────────────────────
+   AES-256 R6 는 SHA-256 한 번이 아니라 64회 이상 돌린다.
+   무차별 대입을 느리게 하려는 장치다(2.B, ISO 32000-2 7.6.4.3.4). */
+async function hash2B(pw, salt, udata, R) {
+  let K = await sha('SHA-256', cat([pw, salt, udata]));
+  if (R === 5) return K;
+  let round = 0, E = null;
+  for (;;) {
+    const one = cat([pw, K, udata]);
+    const K1 = new Uint8Array(one.length * 64);
+    for (let j = 0; j < 64; j++) K1.set(one, j * one.length);
+    E = await aesEncRaw(K.subarray(0, 16), K.subarray(16, 32), K1);
+    let sum = 0;
+    for (let j = 0; j < 16; j++) sum += E[j];
+    const m = sum % 3;
+    K = await sha(m === 0 ? 'SHA-256' : m === 1 ? 'SHA-384' : 'SHA-512', E);
+    round++;
+    if (round >= 64 && E[E.length - 1] <= round - 32) break;
+    if (round > 1000) break;                       // 방어(정상 파일은 64~70회에서 끝난다)
+  }
+  return K.subarray(0, 32);
+}
+
+/* ── 비밀번호를 바이트로 ────────────────────────────
+   R4 이하는 PDFDocEncoding(사실상 Latin-1), R5·R6 은 UTF-8(127바이트까지).
+   한글 암호는 어느 쪽으로 저장됐는지 파일만 봐서는 알 수 없어 둘 다 시도한다. */
+function pwLatin1(s) {
+  const o = new Uint8Array(s.length);
+  for (let i = 0; i < s.length; i++) o[i] = s.charCodeAt(i) & 255;
+  return o;
+}
+function pwUtf8(s) {
+  const b = ENC.encode(s);
+  return b.length > 127 ? b.subarray(0, 127) : b;
+}
+
+/* ── 표준 보안 핸들러(R2~R4) ──────────────────────── */
+const PAD = new Uint8Array([
+  0x28,0xBF,0x4E,0x5E,0x4E,0x75,0x8A,0x41,0x64,0x00,0x4E,0x56,0xFF,0xFA,0x01,0x08,
+  0x2E,0x2E,0x00,0xB6,0xD0,0x68,0x3E,0x80,0x2F,0x0C,0xA9,0xFE,0x64,0x53,0x69,0x7A]);
+
+function padPw(b) {
+  const o = new Uint8Array(32);
+  const n = Math.min(32, b.length);
+  o.set(b.subarray(0, n), 0);
+  o.set(PAD.subarray(0, 32 - n), n);
+  return o;
+}
+
+/* 알고리즘 2 — 패딩된 비밀번호에서 파일 열쇠를 만든다 */
+function keyFromPadded(padded, enc, nBytes) {
+  const parts = [padded, enc.O.subarray(0, 32), i32le(enc.P), enc.id0];
+  if (enc.R >= 4 && !enc.encMeta) parts.push(new Uint8Array([255, 255, 255, 255]));
+  let h = md5(cat(parts));
+  const n = (enc.R === 2) ? 5 : nBytes;
+  if (enc.R >= 3) for (let i = 0; i < 50; i++) h = md5(h.subarray(0, n));
+  return h.subarray(0, n);
+}
+
+/* 알고리즘 6 — 이 열쇠가 사용자 비밀번호에서 나온 것인지 확인 */
+function checkUserKey(key, enc) {
+  if (enc.R === 2) return eqN(rc4(key, PAD), enc.U, 32);
+  let x = md5(cat([PAD, enc.id0]));
+  x = rc4(key, x);
+  for (let i = 1; i <= 19; i++) x = rc4(xorKey(key, i), x);
+  return eqN(x, enc.U, 16);
+}
+
+/* 알고리즘 7 — 소유자 비밀번호에서 "패딩된 사용자 비밀번호" 를 되뽑는다 */
+function userPadFromOwner(pw, enc, nBytes) {
+  let h = md5(padPw(pw));
+  const n = (enc.R === 2) ? 5 : nBytes;
+  if (enc.R >= 3) for (let i = 0; i < 50; i++) h = md5(h);
+  const key = h.subarray(0, n);
+  let d = enc.O.slice(0, 32);
+  if (enc.R === 2) d = rc4(key, d);
+  else for (let i = 19; i >= 0; i--) d = rc4(xorKey(key, i), d);
+  return d;
+}
+
+/* 알고리즘 1 — 객체마다 열쇠를 다시 만든다(V4 이하) */
+function objKey(key, num, gen, aes) {
+  const parts = [key, new Uint8Array([num & 255, (num >> 8) & 255, (num >> 16) & 255, gen & 255, (gen >> 8) & 255])];
+  if (aes) parts.push(new Uint8Array([0x73, 0x41, 0x6C, 0x54]));   // "sAlT"
+  return md5(cat(parts)).subarray(0, Math.min(key.length + 5, 16));
+}
+/* ── PDF 문자열 → 실제 바이트 ──────────────────────
+   Lexer 는 원문을 그대로 담아 두므로(재직렬화를 위해) 값이 필요할 때 푼다.
+   /Indexed 색공간의 팔레트가 이 형태로 들어온다. */
+function strBytes(x) {
+  if (!x || x.t !== 'str') return null;
+  if (x.hex) {
+    const out = []; let hi = -1;
+    for (const c of x.b) {
+      let v = -1;
+      if (c >= 48 && c <= 57) v = c - 48;
+      else if (c >= 97 && c <= 102) v = c - 87;
+      else if (c >= 65 && c <= 70) v = c - 55;
+      else continue;
+      if (hi < 0) hi = v; else { out.push(hi * 16 + v); hi = -1; }
+    }
+    if (hi >= 0) out.push(hi * 16);
+    return Uint8Array.from(out);
+  }
+  const out = [];
+  for (let i = 0; i < x.b.length; i++) {
+    const c = x.b[i];
+    if (c !== 0x5c) { out.push(c); continue; }
+    const d = x.b[++i];
+    if (d === undefined) break;
+    if (d === 0x6e) out.push(10);
+    else if (d === 0x72) out.push(13);
+    else if (d === 0x74) out.push(9);
+    else if (d === 0x62) out.push(8);
+    else if (d === 0x66) out.push(12);
+    else if (d >= 48 && d <= 55) {           // 8진수 최대 3자리
+      let v = d - 48, k = 0;
+      while (k < 2 && x.b[i + 1] >= 48 && x.b[i + 1] <= 55) { v = v * 8 + (x.b[++i] - 48); k++; }
+      out.push(v & 255);
+    } else if (d === 10) { /* 줄바꿈 이어붙이기 */ }
+    else out.push(d);
+  }
+  return Uint8Array.from(out);
+}
+function parseEncrypt(ed, id0) {
+  const filt = dget(ed, '/Filter');
+  if (filt && filt.t === 'name' && filt.s !== '/Standard')
+    throw new Error('표준 방식이 아닌 보안(' + filt.s.slice(1) + ')이 걸려 있어 풀 수 없습니다');
+
+  const V = numv(dget(ed, '/V')) || 0;
+  const R = numv(dget(ed, '/R')) || 0;
+  const bits = numv(dget(ed, '/Length')) || 40;
+  const Pv = dget(ed, '/P');
+  const P = Pv ? (parseInt(Pv.s, 10) | 0) : -1;
+  const em = dget(ed, '/EncryptMetadata');
+
+  const enc = {
+    V, R, P, id0,
+    O: strBytes(dget(ed, '/O')),
+    U: strBytes(dget(ed, '/U')),
+    OE: dget(ed, '/OE') ? strBytes(dget(ed, '/OE')) : null,
+    UE: dget(ed, '/UE') ? strBytes(dget(ed, '/UE')) : null,
+    encMeta: em ? (em.t === 'bool' ? em.v : true) : true,
+    keyLen: V === 1 ? 5 : Math.max(5, Math.min(16, Math.floor(bits / 8))),
+    stm: 'rc4', str: 'rc4', key: null, asOwner: false
+  };
+
+  if (V >= 4) {
+    const cf = dget(ed, '/CF');
+    const pick = (which) => {
+      const nm = dget(ed, which);
+      const s = (nm && nm.t === 'name') ? nm.s : '/Identity';
+      if (s === '/Identity') return 'none';
+      const f = cf ? dget(cf, s) : null;
+      const cfm = f ? dget(f, '/CFM') : null;
+      const m = (cfm && cfm.t === 'name') ? cfm.s : '/None';
+      const L = f ? numv(dget(f, '/Length')) : null;
+      if (L) enc.keyLen = L > 40 ? Math.floor(L / 8) : L;      // 바이트로 적는 곳도, 비트로 적는 곳도 있다
+      if (m === '/AESV3') return 'aes256';
+      if (m === '/AESV2') return 'aes';
+      if (m === '/V2') return 'rc4';
+      return 'none';
+    };
+    enc.stm = pick('/StmF');
+    enc.str = pick('/StrF');
+  }
+  if (V === 5) { enc.stm = 'aes256'; enc.str = 'aes256'; enc.keyLen = 32; }
+  if (enc.stm === 'aes') enc.keyLen = 16;
+
+  enc.label = enc.stm === 'aes256' ? 'AES-256'
+            : enc.stm === 'aes' ? 'AES-128'
+            : 'RC4 ' + (enc.keyLen * 8) + '비트';
+  if (V === 5 && R === 5) enc.label = 'AES-256 (구버전)';
+  return enc;
+}
+
+/* ── 비밀번호 확인 ────────────────────────────────── */
+async function authenticate(enc, pwStr) {
+  if (!SUB && (enc.stm === 'aes' || enc.stm === 'aes256'))
+    throw new Error('이 브라우저에서는 AES 암호를 풀 수 없습니다(WebCrypto 미지원)');
+
+  if (enc.V >= 5) {
+    if (!enc.UE || !enc.OE || enc.U.length < 48 || enc.O.length < 48)
+      throw new Error('AES-256 암호화 정보가 온전하지 않습니다');
+    const pw = pwUtf8(pwStr);
+    const R = enc.R === 5 ? 5 : 6;
+    // ① 사용자(열기) 비밀번호
+    if (eqN(await hash2B(pw, enc.U.subarray(32, 40), new Uint8Array(0), R), enc.U, 32)) {
+      const ik = await hash2B(pw, enc.U.subarray(40, 48), new Uint8Array(0), R);
+      return { key: await aesDecRaw(ik, new Uint8Array(16), enc.UE.subarray(0, 32)), owner: false };
+    }
+    // ② 소유자(권한) 비밀번호
+    const u48 = enc.U.subarray(0, 48);
+    if (eqN(await hash2B(pw, enc.O.subarray(32, 40), u48, R), enc.O, 32)) {
+      const ik = await hash2B(pw, enc.O.subarray(40, 48), u48, R);
+      return { key: await aesDecRaw(ik, new Uint8Array(16), enc.OE.subarray(0, 32)), owner: true };
+    }
+    return null;
+  }
+
+  /* R2~R4. 비밀번호를 어떤 글자 코드로 저장했는지 파일에 안 적혀 있어서,
+     Latin-1 과 UTF-8 을 모두 시도한다. 길이(/Length)를 틀리게 적은 파일도 있어
+     선언된 길이가 실패하면 흔한 두 값(16·5)도 시도한다. */
+  const cands = [];
+  const l1 = pwLatin1(pwStr);
+  cands.push(l1);
+  const u8 = ENC.encode(pwStr);
+  if (u8.length !== l1.length || !eqN(u8, l1, l1.length)) cands.push(u8);
+
+  const lens = [enc.keyLen];
+  if (enc.R >= 3) { if (!lens.includes(16)) lens.push(16); if (!lens.includes(5)) lens.push(5); }
+
+  for (const pw of cands) {
+    for (const n of lens) {
+      let key = keyFromPadded(padPw(pw), enc, n);
+      if (checkUserKey(key, enc)) { enc.keyLen = n; return { key, owner: false }; }
+      key = keyFromPadded(userPadFromOwner(pw, enc, n), enc, n);
+      if (checkUserKey(key, enc)) { enc.keyLen = n; return { key, owner: true }; }
+    }
+  }
+  return null;
+}
+
+/* ── 복호화 / 암호화 한 덩어리 ─────────────────────── */
+async function decOne(enc, how, data, num, gen) {
+  if (how === 'none' || !data.length) return data;
+  if (how === 'aes256') {
+    if (data.length <= 16) return new Uint8Array(0);
+    const iv = data.subarray(0, 16);
+    let body = data.subarray(16);
+    if (body.length % 16) body = body.subarray(0, body.length - (body.length % 16));
+    if (!body.length) return new Uint8Array(0);
+    return await aesDecPad(enc.key, iv, body);
+  }
+  const k = objKey(enc.key, num, gen, how === 'aes');
+  if (how === 'aes') {
+    if (data.length <= 16) return new Uint8Array(0);
+    const iv = data.subarray(0, 16);
+    let body = data.subarray(16);
+    if (body.length % 16) body = body.subarray(0, body.length - (body.length % 16));
+    if (!body.length) return new Uint8Array(0);
+    return await aesDecPad(k, iv, body);
+  }
+  return rc4(k, data);
+}
+async function encOne(key, data) {
+  const iv = rnd(16);
+  return cat([iv, await aesEnc(key, iv, data)]);
+}
+
+/* 바이트를 다시 PDF 문자열 토큰으로. 보기 좋은 글자만이면 (…), 아니면 <16진수>. */
+function mkStr(bytes) {
+  let plain = true;
+  for (let i = 0; i < bytes.length; i++) {
+    const c = bytes[i];
+    if (c < 32 || c > 126 || c === 0x28 || c === 0x29 || c === 0x5c) { plain = false; break; }
+  }
+  if (plain) return { t: 'str', b: bytes.slice(), hex: false };
+  let s = '';
+  for (let i = 0; i < bytes.length; i++) s += bytes[i].toString(16).padStart(2, '0');
+  return { t: 'str', b: ENC.encode(s), hex: true };
+}
+
+/* 객체 안의 문자열을 전부 바꿔치기한다(사전·배열을 재귀로 훑는다) */
+async function mapStrings(v, fn, depth) {
+  if (!v || (depth || 0) > 64) return;
+  if (v.t === 'arr') {
+    for (let i = 0; i < v.v.length; i++) {
+      const e = v.v[i];
+      if (e && e.t === 'str') v.v[i] = await fn(e);
+      else await mapStrings(e, fn, (depth || 0) + 1);
+    }
+    return;
+  }
+  const d = v.t === 'stream' ? v.d : v;
+  if (!d || d.t !== 'dict') return;
+  for (const pair of d.m) {
+    const e = pair[1];
+    if (e && e.t === 'str') pair[1] = await fn(e);
+    else await mapStrings(e, fn, (depth || 0) + 1);
+  }
+}
+
+/* ── 문서 전체 복호화 ──────────────────────────────
+   객체 스트림(/ObjStm)을 펼치기 전에 해야 한다.
+   스트림 안에 든 객체의 문자열은 따로 암호화되어 있지 않고(규격 7.6.2),
+   ObjStm 스트림 자체가 통째로 암호화되어 있기 때문이다.        */
+async function decryptDoc(doc) {
+  const enc = doc.enc;
+  for (const [num, o] of doc.objs) {
+    if (num === doc.encNum) continue;                       // 암호화 사전 자신은 암호화되지 않는다
+    const v = o.v;
+    const isStm = v.t === 'stream';
+    let ty = null;
+    if (isStm) { const t = dget(v.d, '/Type'); ty = (t && t.t === 'name') ? t.s : null; }
+    if (ty === '/XRef') continue;                           // 교차참조 스트림도 예외
+
+    if (enc.str !== 'none') await mapStrings(v, async (s) => mkStr(await decOne(enc, enc.str, strBytes(s), num, o.gen)), 0);
+
+    if (isStm && enc.stm !== 'none') {
+      if (ty === '/Metadata' && !enc.encMeta) continue;
+      const f = dget(v.d, '/Filter');
+      const f1 = f ? (f.t === 'arr' ? f.v[0] : f) : null;
+      if (f1 && f1.t === 'name' && f1.s === '/Crypt') continue;   // /Crypt 필터는 따로 다룬다(대개 Identity)
+      v.data = await decOne(enc, enc.stm, v.data, num, o.gen);
+    }
+  }
+}
+PDFDoc.prototype.trailerDicts = function () {
+    const out = [];
+    for (const p of findAll(this.b, 'trailer')) {
+      try { const t = new Lexer(this.b, p + 7).parse(); if (t && t.t === 'dict') out.push(t); } catch (e) {}
+    }
+    for (const [, o] of this.objs) {
+      if (o.v.t === 'stream') {
+        const ty = dget(o.v.d, '/Type');
+        if (ty && ty.t === 'name' && ty.s === '/XRef') out.push(o.v.d);
+      }
+    }
+    return out;
+};
+PDFDoc.prototype.findEncrypt = function () {
+    let encRef = null, id0 = null;
+    for (const d of this.trailerDicts()) {
+      const e = dget(d, '/Encrypt');
+      if (e) encRef = e;
+      const id = dget(d, '/ID');
+      if (id && id.t === 'arr' && id.v.length && id.v[0] && id.v[0].t === 'str') id0 = strBytes(id.v[0]);
+    }
+    if (!encRef) return null;
+    let ed = null, encNum = 0;
+    if (encRef.t === 'ref') {
+      encNum = encRef.n;
+      const o = this.objs.get(encRef.n);
+      ed = o ? o.v : null;
+    } else if (encRef.t === 'dict') ed = encRef;
+    if (!ed || ed.t !== 'dict') throw new Error('암호화 정보를 읽지 못했습니다');
+    return { ed, encNum, id0: id0 || new Uint8Array(0) };
+};
+/* 열기 암호가 없는 잠금만 푼다. 열기 암호가 걸린 것은 여기서 멈춘다 */
+async function unlockDoc(d) {
+  const info = d.findEncrypt();
+  if (!info) throw new Error('암호가 걸린 PDF입니다 — 암호를 푼 사본으로 넣어 주세요');
+  const enc = parseEncrypt(info.ed, info.id0);
+  const auth = await authenticate(enc, '');
+  if (!auth) throw new Error('열 때 암호를 묻는 PDF입니다 — 암호를 푼 사본으로 넣어 주세요');
+  enc.key = auth.key; enc.asOwner = auth.owner;
+  d.enc = enc; d.encNum = info.encNum;
+  await decryptDoc(d);
+  d.unlocked = true;
+}
+/* ══════════════════════════════════════════════════════════════
+   워터마크 그리기
+   o = { kind:'text'|'logo', text, color, bold, stroke, opacity(0~1),
+         size(짧은 변 대비 %), layout:'tile'|'center'|'pos', pos:'tl'…'br',
+         angle(도), gap(한 칸 높이의 배수), logo(캔버스) }
+   한 칸(글자 덩어리·로고)을 먼저 불투명하게 따로 그려 두고, 그걸 투명도를 걸어 찍는다.
+   글자에 바로 globalAlpha 를 걸면 테두리와 글자가 겹친 부분만 두 번 칠해져 얼룩이 진다.
+   ══════════════════════════════════════════════════════════════ */
+const WM_FONT = '"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR","Noto Sans CJK KR",sans-serif';
+const AREA_MAX = 16000000;   /* 아이폰 사파리 캔버스 면적 한계(1,670만) 아래로 */
+
+function newCanvas(w, h) {
+  const c = document.createElement('canvas');
+  c.width = Math.max(1, Math.round(w)); c.height = Math.max(1, Math.round(h));
+  return c;
+}
+function releaseCanvas(cv) { try { cv.width = 0; cv.height = 0; } catch (e) { /* 무시 */ } }
+
+/* 색이 밝으면 테두리는 어둡게, 어두우면 밝게 */
+function contrastOf(hex) {
+  const v = parseInt(hex.slice(1), 16);
+  const r = v >> 16 & 255, g = v >> 8 & 255, b = v & 255;
+  return (r * 299 + g * 587 + b * 114) / 1000 > 150 ? 'rgba(0,0,0,.85)' : 'rgba(255,255,255,.92)';
+}
+
+function wmLines(o) {
+  return String(o.text || '').split(/\r?\n/).map(s => s.trim()).filter(Boolean).slice(0, 6);
+}
+
+/* 한 칸을 그린 캔버스. short = 그릴 바탕의 짧은 변(px) */
+function makeUnit(o, short) {
+  if (o.kind === 'logo') {
+    if (!o.logo) return null;
+    const lw = Math.max(4, short * o.size * 3 / 100);           /* 로고는 글자보다 크게 — 크기 5% → 짧은 변의 15% */
+    const lh = lw * o.logo.height / o.logo.width;
+    const c = newCanvas(lw, lh);
+    const x = c.getContext('2d');
+    x.imageSmoothingQuality = 'high';
+    x.drawImage(o.logo, 0, 0, c.width, c.height);
+    return c;
+  }
+  const lines = wmLines(o);
+  if (!lines.length) return null;
+  const fs = Math.max(4, short * o.size / 100);
+  const font = (o.bold ? '800 ' : '500 ') + fs + 'px ' + WM_FONT;
+  const probe = newCanvas(4, 4).getContext('2d');
+  probe.font = font;
+  let w = 0;
+  for (const s of lines) w = Math.max(w, probe.measureText(s).width);
+  const lh = fs * 1.28, sw = o.stroke ? Math.max(1.5, fs * 0.13) : 0;
+  const pad = Math.ceil(sw + fs * 0.12);
+  const c = newCanvas(w + pad * 2, lh * lines.length + pad * 2);
+  const x = c.getContext('2d');
+  x.font = font;
+  x.textAlign = 'center';
+  x.textBaseline = 'middle';
+  const cx = c.width / 2;
+  lines.forEach((s, i) => {
+    const y = pad + lh * (i + 0.5);
+    if (sw) {
+      x.lineJoin = 'round'; x.miterLimit = 2;
+      x.lineWidth = sw; x.strokeStyle = contrastOf(o.color);
+      x.strokeText(s, cx, y);
+    }
+    x.fillStyle = o.color;
+    x.fillText(s, cx, y);
+  });
+  return c;
+}
+
+/* 캔버스 ctx 의 (0,0)~(W,H) 에 워터마크를 그린다 */
+function drawWatermark(ctx, W, H, o) {
+  const short = Math.min(W, H);
+  const unit = makeUnit(o, short);
+  if (!unit) return false;
+  const uw = unit.width, uh = unit.height;
+  ctx.save();
+  ctx.globalAlpha = o.opacity;
+  ctx.imageSmoothingQuality = 'high';
+  const rad = o.angle * Math.PI / 180;
+  if (o.layout === 'tile') {
+    /* 기울인 좌표계에서 격자를 깐다. 줄마다 반 칸씩 엇갈려 벽돌처럼 — 가지런한 격자보다 지우기 어렵다 */
+    const gap = Math.max(0.2, o.gap) * uh * 0.8;
+    const sx = uw + gap * 1.4, sy = uh + gap;
+    const R = Math.hypot(W, H) / 2 + Math.max(sx, sy);
+    ctx.translate(W / 2, H / 2);
+    ctx.rotate(rad);
+    const nj = Math.ceil(R / sy), ni = Math.ceil(R / sx) + 1;
+    for (let j = -nj; j <= nj; j++) {
+      const off = (j & 1) ? sx / 2 : 0;
+      for (let i = -ni; i <= ni; i++) ctx.drawImage(unit, i * sx + off - uw / 2, j * sy - uh / 2);
+    }
+  } else if (o.layout === 'center') {
+    ctx.translate(W / 2, H / 2);
+    ctx.rotate(rad);
+    ctx.drawImage(unit, -uw / 2, -uh / 2);
+  } else {
+    const m = short * 0.03;
+    const p = o.pos || 'br';
+    const x = p[1] === 'l' ? m : p[1] === 'r' ? W - m - uw : (W - uw) / 2;
+    const y = p[0] === 't' ? m : p[0] === 'b' ? H - m - uh : (H - uh) / 2;
+    ctx.drawImage(unit, x, y);
+  }
+  ctx.restore();
+  releaseCanvas(unit);
+  return true;
+}
+
+/* ── 로고 준비 ── 흰 바탕을 투명하게(부드럽게 — 가장자리가 톱니처럼 되지 않게) */
+async function prepLogo(file, removeWhite) {
+  const bmp = await decodeImage(file);
+  let w = bmp.width, h = bmp.height;
+  const k = Math.min(1, 1600 / Math.max(w, h));
+  const c = newCanvas(w * k, h * k);
+  const x = c.getContext('2d', { willReadFrequently: true });
+  x.drawImage(bmp, 0, 0, c.width, c.height);
+  if (bmp.close) bmp.close();
+  if (removeWhite) {
+    const id = x.getImageData(0, 0, c.width, c.height), d = id.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const lo = Math.min(d[i], d[i + 1], d[i + 2]);
+      if (lo >= 246) d[i + 3] = 0;
+      else if (lo > 214) d[i + 3] = Math.round(d[i + 3] * (246 - lo) / 32);
+    }
+    x.putImageData(id, 0, 0);
+  }
+  /* 투명한 가장자리를 잘라 낸다 — 여백 때문에 모서리 로고가 안쪽으로 밀리지 않게 */
+  const id2 = x.getImageData(0, 0, c.width, c.height), a = id2.data;
+  let x0 = c.width, y0 = c.height, x1 = -1, y1 = -1;
+  for (let yy = 0; yy < c.height; yy++) {
+    for (let xx = 0; xx < c.width; xx++) {
+      if (a[(yy * c.width + xx) * 4 + 3] > 8) {
+        if (xx < x0) x0 = xx; if (xx > x1) x1 = xx;
+        if (yy < y0) y0 = yy; if (yy > y1) y1 = yy;
+      }
+    }
+  }
+  if (x1 < 0) throw new Error('로고가 전부 투명(또는 흰색)입니다');
+  if (x0 === 0 && y0 === 0 && x1 === c.width - 1 && y1 === c.height - 1) return c;
+  const t = newCanvas(x1 - x0 + 1, y1 - y0 + 1);
+  t.getContext('2d').drawImage(c, x0, y0, t.width, t.height, 0, 0, t.width, t.height);
+  releaseCanvas(c);
+  return t;
+}
+
+/* ── 사진 읽기 ── EXIF 회전을 따른다(세로 사진이 눕지 않게) */
+async function decodeImage(file) {
+  if (typeof createImageBitmap === 'function') {
+    try { return await createImageBitmap(file, { imageOrientation: 'from-image' }); } catch (e) { /* img 로 한 번 더 */ }
+  }
+  return await new Promise((res, rej) => {
+    const url = URL.createObjectURL(file);
+    const im = new Image();
+    im.onload = () => { res(im); setTimeout(() => URL.revokeObjectURL(url), 1000); };
+    im.onerror = () => { URL.revokeObjectURL(url); rej(new Error('열 수 없는 그림입니다')); };
+    im.src = url;
+  });
+}
+const imgW = b => b.naturalWidth || b.width;
+const imgH = b => b.naturalHeight || b.height;
+
+function canvasToBlob(cv, type, q) {
+  return new Promise((res, rej) => cv.toBlob(b => b ? res(b) : rej(new Error('그림을 저장하지 못했습니다')), type, q));
+}
+
+/* 사진 한 장 → 워터마크를 넣은 Blob */
+async function watermarkImage(file, o, fmt, maxSide) {
+  const bmp = await decodeImage(file);
+  let w = imgW(bmp), h = imgH(bmp);
+  let k = 1;
+  if (maxSide && Math.max(w, h) > maxSide) k = maxSide / Math.max(w, h);
+  if (w * h * k * k > AREA_MAX) k = Math.sqrt(AREA_MAX / (w * h));
+  const cw = Math.max(1, Math.round(w * k)), ch = Math.max(1, Math.round(h * k));
+  const type = outType(file, fmt);
+  const cv = newCanvas(cw, ch);
+  const x = cv.getContext('2d');
+  if (type === 'image/jpeg') { x.fillStyle = '#fff'; x.fillRect(0, 0, cw, ch); }   /* 투명 PNG 를 JPG 로 — 검게 되지 않게 */
+  x.imageSmoothingQuality = 'high';
+  x.drawImage(bmp, 0, 0, cw, ch);
+  if (bmp.close) bmp.close();
+  drawWatermark(x, cw, ch, o);
+  const blob = await canvasToBlob(cv, type, type === 'image/png' ? undefined : 0.92);
+  releaseCanvas(cv);
+  return { blob, w: cw, h: ch, shrunk: k < 1 };
+}
+
+/* 저장 형식 — 원래 형식을 따르되 브라우저가 못 쓰는 형식(HEIC·GIF·BMP)은 JPG/PNG 로 */
+function outType(file, fmt) {
+  const t = (file.type || '').toLowerCase(), n = (file.name || '').toLowerCase();
+  if (fmt === 'jpg') return 'image/jpeg';
+  if (/png/.test(t) || /\.png$/.test(n)) return 'image/png';
+  if (/webp/.test(t) || /\.webp$/.test(n)) return webpOK() ? 'image/webp' : 'image/png';
+  if (/gif|bmp/.test(t) || /\.(gif|bmp)$/.test(n)) return 'image/png';
+  return 'image/jpeg';
+}
+let _webp = null;
+function webpOK() {
+  if (_webp === null) {
+    try { _webp = newCanvas(1, 1).toDataURL('image/webp').indexOf('data:image/webp') === 0; } catch (e) { _webp = false; }
+  }
+  return _webp;
+}
+const EXT = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'application/pdf': 'pdf' };
+
+/* ══════════════════════════════════════════════════════════════
+   PDF 에 워터마크 얹기
+   쪽마다: [q] + 원래 콘텐츠 + [Q q (보이는 방향에 맞춘 행렬) cm /JkWm Do Q]
+   그림은 RGB + 알파(SMask) 두 장. 쪽 크기(보이는 방향 기준)가 같으면 그림 한 벌을 같이 쓴다.
+   ══════════════════════════════════════════════════════════════ */
+function boxOf(doc, v) {
+  const a = doc.resolve(v);
+  if (!a || a.t !== 'arr' || a.v.length < 4) return null;
+  const n = a.v.map(e => numv(doc.resolve(e)));
+  if (n.some(x => x === null || !isFinite(x))) return null;
+  return [Math.min(n[0], n[2]), Math.min(n[1], n[3]), Math.max(n[0], n[2]), Math.max(n[1], n[3])];
+}
+function pageGeom(doc, pg) {
+  const d = pg.dict, inh = pg.inh || {};
+  let box = boxOf(doc, dget(d, '/CropBox') || inh['/CropBox']);
+  const media = boxOf(doc, dget(d, '/MediaBox') || inh['/MediaBox']) || [0, 0, 612, 792];
+  if (box) {   /* CropBox 는 MediaBox 안쪽만 유효하다 */
+    box = [Math.max(box[0], media[0]), Math.max(box[1], media[1]), Math.min(box[2], media[2]), Math.min(box[3], media[3])];
+    if (box[2] - box[0] < 1 || box[3] - box[1] < 1) box = media;
+  } else box = media;
+  let rot = numv(doc.resolve(dget(d, '/Rotate') || inh['/Rotate'])) || 0;
+  rot = ((Math.round(rot / 90) * 90) % 360 + 360) % 360;
+  const W = box[2] - box[0], H = box[3] - box[1];
+  const dw = (rot === 90 || rot === 270) ? H : W, dh = (rot === 90 || rot === 270) ? W : H;
+  return { box, rot, W, H, dw, dh };
+}
+/* 단위 정사각형 그림을 「보이는 방향 그대로」 쪽 전체에 까는 행렬 */
+function placeMatrix(g) {
+  const [x0, y0, x1, y1] = g.box, W = g.W, H = g.H;
+  switch (g.rot) {
+    case 90: return [0, H, -W, 0, x1, y0];
+    case 180: return [-W, 0, 0, -H, x1, y1];
+    case 270: return [0, -H, W, 0, x0, y1];
+    default: return [W, 0, 0, H, x0, y0];
+  }
+}
+const fmtN = n => { const r = Math.round(n * 10000) / 10000; return (Object.is(r, -0) ? 0 : r).toString(); };
+const N = n => ({ t: 'num', s: String(n) });
+const NM = s => ({ t: 'name', s });
+const REF = n => ({ t: 'ref', n, g: 0 });
+
+/* 워터마크 한 벌을 PDF 그림 객체 두 개(RGB + 알파)로 */
+async function wmImageObjs(dw, dh, o) {
+  /* 쪽 크기(pt)에 맞춰 200dpi 안팎으로 그리되 600만 화소를 넘기지 않는다 */
+  let s = 200 / 72;
+  if (dw * dh * s * s > 6e6) s = Math.sqrt(6e6 / (dw * dh));
+  const cw = Math.max(8, Math.round(dw * s)), ch = Math.max(8, Math.round(dh * s));
+  const cv = newCanvas(cw, ch);
+  const x = cv.getContext('2d', { willReadFrequently: true });
+  if (!drawWatermark(x, cw, ch, o)) { releaseCanvas(cv); return null; }
+  const px = x.getImageData(0, 0, cw, ch).data;
+  releaseCanvas(cv);
+  const rgb = new Uint8Array(cw * ch * 3), al = new Uint8Array(cw * ch);
+  let any = false;
+  for (let i = 0, j = 0, k = 0; i < px.length; i += 4, j += 3, k++) {
+    const a = px[i + 3];
+    al[k] = a;
+    if (a) { any = true; rgb[j] = px[i]; rgb[j + 1] = px[i + 1]; rgb[j + 2] = px[i + 2]; }
+  }
+  if (!any) return null;
+  const [zr, za] = await Promise.all([deflateBytes(rgb), deflateBytes(al)]);
+  const base = [['/Type', NM('/XObject')], ['/Subtype', NM('/Image')], ['/Width', N(cw)], ['/Height', N(ch)],
+    ['/BitsPerComponent', N(8)], ['/Filter', NM('/FlateDecode')]];
+  const smask = { t: 'stream', d: { t: 'dict', m: base.concat([['/ColorSpace', NM('/DeviceGray')]]) }, data: za };
+  const img = { t: 'stream', d: { t: 'dict', m: base.concat([['/ColorSpace', NM('/DeviceRGB')], ['/Interpolate', { t: 'bool', v: true }]]) }, data: zr };
+  return { img, smask };
+}
+
+async function watermarkPdf(bytes, name, o, onProg) {
+  const doc = await PDFDoc.load(bytes, name);
+  const pages = doc.pages();
+  if (!pages.length) throw new Error('쪽을 찾지 못했습니다');
+  const rootNum = objNumOf(doc, doc.root);
+  if (!rootNum) throw new Error('문서 구조(Catalog)를 찾지 못했습니다');
+  const infoNum = findInfoNum(doc);
+  let next = 0;
+  for (const n of doc.objs.keys()) if (n > next) next = n;
+  const add = v => { next++; doc.objs.set(next, { gen: 0, v, off: Infinity }); return next; };
+
+  const pre = add({ t: 'stream', d: { t: 'dict', m: [] }, data: ENC.encode('q\n') });
+  const cache = new Map();
+  let done = 0, stamped = 0;
+  for (const pg of pages) {
+    const g = pageGeom(doc, pg);
+    const key = fmtN(g.dw) + 'x' + fmtN(g.dh);
+    let ent = cache.get(key);
+    if (ent === undefined) {
+      const objs = await wmImageObjs(g.dw, g.dh, o);
+      if (objs) {
+        const sm = add(objs.smask);
+        dset(objs.img.d, '/SMask', REF(sm));
+        ent = add(objs.img);
+      } else ent = 0;
+      cache.set(key, ent);
+    }
+    if (ent) {
+      /* 리소스 — 원래 것(상속 포함)을 복사해 이 쪽에만 새로 단다. 여러 쪽이 같이 쓰는 사전을 건드리지 않는다 */
+      const d = pg.dict;
+      const res = doc.resolve(dget(d, '/Resources') || (pg.inh || {})['/Resources']);
+      const nres = { t: 'dict', m: (res && res.t === 'dict') ? res.m.map(e => [e[0], e[1]]) : [] };
+      const xo = doc.resolve(dget(nres, '/XObject'));
+      const nxo = { t: 'dict', m: (xo && xo.t === 'dict') ? xo.m.map(e => [e[0], e[1]]) : [] };
+      let wn = '/JkWm', k = 0;
+      while (dget(nxo, wn)) wn = '/JkWm' + (++k);
+      dset(nxo, wn, REF(ent));
+      dset(nres, '/XObject', nxo);
+      dset(d, '/Resources', nres);
+
+      const m = placeMatrix(g).map(fmtN).join(' ');
+      const post = add({ t: 'stream', d: { t: 'dict', m: [] }, data: ENC.encode('\nQ\nq ' + m + ' cm ' + wn + ' Do Q\n') });
+      const c = dget(d, '/Contents');
+      const cr = c ? doc.resolve(c) : null;
+      let list = [];
+      if (cr && cr.t === 'arr') list = cr.v.slice();
+      else if (c && c.t === 'ref') list = [c];
+      else if (cr && cr.t === 'stream') list = [REF(add(cr))];     /* 드물게 직접 스트림 — 번호를 붙여 옮긴다 */
+      dset(d, '/Contents', { t: 'arr', v: [REF(pre)].concat(list, [REF(post)]) });
+      stamped++;
+    }
+    done++;
+    if (onProg && (done % 8 === 0 || done === pages.length)) { onProg(done / pages.length); await new Promise(r => setTimeout(r, 0)); }
+  }
+  if (!stamped) throw new Error('워터마크 글자(또는 로고)가 비어 있습니다');
+  const out = await rebuild(doc, rootNum, infoNum, new Map(), { stripMeta: false });
+  return { bytes: out, pages: pages.length };
+}
+
+/* PDF 미리보기용 — 첫 쪽의 크기와, 스캔 PDF 라면 쪽을 덮는 JPEG 그림 */
+async function pdfPreviewInfo(bytes, name) {
+  const doc = await PDFDoc.load(bytes, name);
+  const pages = doc.pages();
+  if (!pages.length) throw new Error('쪽을 찾지 못했습니다');
+  const g = pageGeom(doc, pages[0]);
+  let bg = null;
+  try {
+    if (g.rot === 0) {
+      const res = doc.resolve(dget(pages[0].dict, '/Resources') || (pages[0].inh || {})['/Resources']);
+      const xo = doc.resolve(dget(res, '/XObject'));
+      let best = null, bestA = 0;
+      if (xo && xo.t === 'dict') {
+        for (const [, v] of xo.m) {
+          const st = doc.resolve(v);
+          if (!st || st.t !== 'stream') continue;
+          if ((dget(st.d, '/Subtype') || {}).s !== '/Image') continue;
+          const f = doc.resolve(dget(st.d, '/Filter'));
+          const fl = f ? (f.t === 'arr' ? f.v.map(e => e.s) : [f.s]) : [];
+          if (fl.length !== 1 || fl[0] !== '/DCTDecode') continue;
+          const cs = doc.resolve(dget(st.d, '/ColorSpace'));
+          if (cs && cs.t === 'name' && /CMYK/.test(cs.s)) continue;       /* CMYK JPEG 는 브라우저가 음화로 그린다 */
+          const w = numv(doc.resolve(dget(st.d, '/Width'))) || 0, h = numv(doc.resolve(dget(st.d, '/Height'))) || 0;
+          if (w * h > bestA) { bestA = w * h; best = { st, w, h }; }
+        }
+      }
+      /* 쪽과 가로세로 비율이 비슷한 큰 그림이면 쪽 전체를 덮는 스캔이라고 본다 */
+      if (best && best.w >= 300 && Math.abs(best.w / best.h - g.dw / g.dh) < 0.06 * (g.dw / g.dh)) {
+        bg = await createImageBitmap(new Blob([best.st.data], { type: 'image/jpeg' }),
+          { resizeWidth: Math.min(1000, best.w), resizeQuality: 'high' });
+      }
+    }
+  } catch (e) { bg = null; }
+  return { pages: pages.length, dw: g.dw, dh: g.dh, bg, unlocked: !!doc.unlocked };
+}
+
+/* 스캔이 아닌 PDF 첫 쪽 — 흐린 글줄 모양으로 대신 그린다(실제 글자를 그리는 렌더러는 넣지 않았다) */
+function drawFakePage(x, W, H) {
+  x.fillStyle = '#fff'; x.fillRect(0, 0, W, H);
+  const m = W * 0.1, lh = H * 0.028;
+  x.fillStyle = '#d9d6e2';
+  x.fillRect(m, H * 0.08, W * 0.45, lh * 1.3);
+  let y = H * 0.16, i = 0;
+  while (y < H * 0.9) {
+    const wl = (i % 7 === 6) ? 0.5 : (0.78 + ((i * 37) % 17) / 100);
+    x.fillStyle = '#e7e4ee';
+    x.fillRect(m, y, (W - m * 2) * Math.min(1, wl), lh * 0.55);
+    y += (i % 7 === 6) ? lh * 2.2 : lh * 1.25; i++;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ZIP — 이미 압축된 그림·PDF 라 다시 누를 이득이 없어 「저장(stored)」만 쓴다.
+   파일 이름은 UTF-8 표시(일반 목적 비트 11)를 켜서 한글 이름이 윈도우·맥에서 깨지지 않게 한다.
+   ══════════════════════════════════════════════════════════════ */
+const CRC_T = (() => {
+  const t = new Uint32Array(256);
+  for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; }
+  return t;
+})();
+function crc32(b) {
+  let c = 0xFFFFFFFF;
+  for (let i = 0; i < b.length; i++) c = CRC_T[(c ^ b[i]) & 255] ^ (c >>> 8);
+  return (c ^ 0xFFFFFFFF) >>> 0;
+}
+function makeZip(entries) {   /* [{name, data:Uint8Array}] */
+  const now = new Date();
+  const dt = ((now.getHours() << 11) | (now.getMinutes() << 5) | (now.getSeconds() >> 1)) & 0xFFFF;
+  const dd = (((now.getFullYear() - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate()) & 0xFFFF;
+  const parts = [], cdir = [];
+  let off = 0;
+  for (const e of entries) {
+    const nm = ENC.encode(e.name), crc = crc32(e.data), sz = e.data.length;
+    const h = new DataView(new ArrayBuffer(30));
+    h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(8, 0, true);
+    h.setUint16(10, dt, true); h.setUint16(12, dd, true); h.setUint32(14, crc, true);
+    h.setUint32(18, sz, true); h.setUint32(22, sz, true); h.setUint16(26, nm.length, true); h.setUint16(28, 0, true);
+    parts.push(new Uint8Array(h.buffer), nm, e.data);
+    const c = new DataView(new ArrayBuffer(46));
+    c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true);
+    c.setUint16(10, 0, true); c.setUint16(12, dt, true); c.setUint16(14, dd, true); c.setUint32(16, crc, true);
+    c.setUint32(20, sz, true); c.setUint32(24, sz, true); c.setUint16(28, nm.length, true);
+    c.setUint32(42, off, true);
+    cdir.push(new Uint8Array(c.buffer), nm);
+    off += 30 + nm.length + sz;
+  }
+  let cl = 0; for (const p of cdir) cl += p.length;
+  const end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true); end.setUint16(8, entries.length, true); end.setUint16(10, entries.length, true);
+  end.setUint32(12, cl, true); end.setUint32(16, off, true);
+  return new Blob(parts.concat(cdir, [new Uint8Array(end.buffer)]), { type: 'application/zip' });
+}
+/* ══════════════════════════════════════════════════════════════
+   화면
+   ══════════════════════════════════════════════════════════════ */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+
+let files = [];
+let uid = 0, selId = 0, busy = false, logoCv = null, logoId = 0;
+const OPT_KEY = 'watermark.opt';
+const opt = {
+  kind: 'text', text: '제출용 사본\n다른 용도 사용 금지', color: '#5b5b5b', bold: true, stroke: false,
+  opacity: 35, sizeT: 5, sizeL: 5, layout: 'tile', pos: 'br', angle: -30, gap: 1.1,
+  fmt: 'same', maxSide: 0, white: true
+};
+
+let toastT;
+function toast(msg, ms) {
+  const t = $('#toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), ms || 2400);
+}
+function fmtSize(n) {
+  if (n < 1024) return n + 'B';
+  if (n < 1023488) return (n / 1024).toFixed(n < 10240 ? 1 : 0) + 'KB';
+  return (n / 1048576).toFixed(n < 10485760 ? 2 : 1) + 'MB';
+}
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function today() {
+  const d = new Date();
+  return d.getFullYear() + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + String(d.getDate()).padStart(2, '0');
+}
+
+/* 그리기에 넘길 설정 — 로고 모드면 크기 슬라이더를 로고 값으로 읽는다 */
+function wmOpt() {
+  return {
+    kind: opt.kind, text: opt.text, color: opt.color, bold: opt.bold, stroke: opt.stroke,
+    opacity: opt.opacity / 100, size: opt.kind === 'logo' ? opt.sizeL : opt.sizeT,
+    layout: opt.layout, pos: opt.pos, angle: opt.layout === 'pos' ? 0 : opt.angle, gap: opt.gap, logo: logoCv
+  };
+}
+/* 결과를 다시 만들어야 하는지 가르는 지문 */
+function sig() {
+  const o = wmOpt();
+  return JSON.stringify([o.kind, o.kind === 'text' ? o.text : logoId, o.color, o.bold, o.stroke, o.opacity, o.size,
+    o.layout, o.pos, o.angle, o.gap, opt.fmt, opt.maxSide]);
+}
+function ready() {
+  if (opt.kind === 'logo') return !!logoCv;
+  return wmLines(opt).length > 0;
+}
+function saveOpt() {
+  try { localStorage.setItem(OPT_KEY, JSON.stringify(opt)); } catch (e) { /* 개인 창 등 — 무시 */ }
+}
+function loadOpt() {
+  try {
+    const v = JSON.parse(localStorage.getItem(OPT_KEY) || 'null');
+    if (v && typeof v === 'object') for (const k of Object.keys(opt)) if (k in v && typeof v[k] === typeof opt[k]) opt[k] = v[k];
+  } catch (e) { /* 무시 */ }
+  if (opt.kind === 'logo') opt.kind = 'text';   /* 로고 파일은 저장해 두지 않으므로 글자로 시작 */
+}
+
+/* ── 설정 → 화면 ── */
+function paintOpt() {
+  $$('#segKind button').forEach(b => b.classList.toggle('on', b.dataset.k === opt.kind));
+  $('#textRow').classList.toggle('hide', opt.kind !== 'text');
+  $('#logoRow').classList.toggle('hide', opt.kind !== 'logo');
+  $('#colorRow').classList.toggle('hide', opt.kind !== 'text');
+  if ($('#wmText').value !== opt.text) $('#wmText').value = opt.text;
+  fitText();
+  $$('#segLayout button').forEach(b => b.classList.toggle('on', b.dataset.l === opt.layout));
+  $('#posRow').classList.toggle('hide', opt.layout !== 'pos');
+  $('#angleRow').classList.toggle('hide', opt.layout === 'pos');
+  $('#gapRow').classList.toggle('hide', opt.layout !== 'tile');
+  $$('#posGrid button').forEach(b => b.classList.toggle('on', b.dataset.p === opt.pos));
+  const sz = opt.kind === 'logo' ? opt.sizeL : opt.sizeT;
+  $('#rSize').value = sz;
+  $('#oSize').textContent = (opt.kind === 'logo' ? Math.round(sz * 3) : sz) + '%';
+  $('#rOpa').value = opt.opacity; $('#oOpa').textContent = opt.opacity + '%';
+  $('#rAng').value = opt.angle; $('#oAng').textContent = opt.angle + '°';
+  $('#rGap').value = opt.gap; $('#oGap').textContent = '×' + (+opt.gap).toFixed(1);
+  let hit = false;
+  $$('#colors .sw[data-c]').forEach(b => { const on = b.dataset.c === opt.color; b.classList.toggle('on', on); hit = hit || on; });
+  $('#pickSw').classList.toggle('on', !hit);
+  if (!hit) $('#pickColor').value = opt.color;
+  $('#optBold').checked = opt.bold; $('#optStroke').checked = opt.stroke; $('#optWhite').checked = opt.white;
+  $$('#segFmt button').forEach(b => b.classList.toggle('on', b.dataset.f === opt.fmt));
+  $('#selSize').value = String(opt.maxSide);
+  const lay = { tile: '바둑판', center: '가운데', pos: '위치 지정' }[opt.layout];
+  $('#setHint').textContent = (opt.kind === 'logo' ? '로고' : '글자') + ' · ' + lay + ' · 진하기 ' + opt.opacity + '%';
+}
+/* 글씨 칸은 줄 수만큼 늘어난다 — 세 줄째가 칸 밖에 숨어 있으면 넣은 줄을 모르고 저장한다 */
+function fitText() {
+  const t = $('#wmText');
+  t.style.height = 'auto';
+  t.style.height = Math.max(74, t.scrollHeight + 2) + 'px';
+}
+function changed() { saveOpt(); paintOpt(); schedulePreview(); }
+
+/* ── 파일 넣기 ── */
+function kindOf(f) {
+  const t = (f.type || '').toLowerCase(), n = (f.name || '').toLowerCase();
+  if (t === 'application/pdf' || /\.pdf$/.test(n)) return 'pdf';
+  if (/^image\//.test(t) || /\.(jpe?g|png|webp|gif|bmp|heic|heif|avif)$/.test(n)) return 'img';
+  return '';
+}
+async function addFiles(list) {
+  const arr = Array.from(list || []);
+  if (!arr.length) return;
+  let skipped = 0;
+  const added = [];
+  for (const file of arr) {
+    const kind = kindOf(file);
+    if (!kind) { skipped++; continue; }
+    const f = { id: ++uid, file, name: file.name || (kind === 'pdf' ? 'document.pdf' : 'image.jpg'), size: file.size, kind, loading: true };
+    files.push(f); added.push(f);
+  }
+  if (skipped) toast('사진과 PDF만 넣을 수 있어요 · ' + skipped + '개는 뺐습니다', 3200);
+  if (!added.length) return;
+  if (!selId || !files.some(x => x.id === selId)) selId = added[0].id;
+  render();
+  for (const f of added) {
+    try {
+      if (f.kind === 'img') await loadImage(f); else await loadPdf(f);
+    } catch (e) {
+      f.err = (e && e.message) || '열지 못했습니다';
+      if (f.kind === 'img' && /\.(heic|heif)$/i.test(f.name)) f.err = 'HEIC는 이 브라우저에서 열리지 않습니다 (아이폰 사파리에서는 됩니다)';
+    }
+    f.loading = false;
+    render();
+    if (f.id === selId) schedulePreview();
+  }
+  const firstOk = files.find(x => x.id === selId && !x.err) || files.find(x => !x.err && !x.loading);
+  if (firstOk && firstOk.id !== selId) { selId = firstOk.id; render(); }
+  schedulePreview();
+  updateMbar();
+}
+async function loadImage(f) {
+  const bmp = await decodeImage(f.file);
+  f.w = imgW(bmp); f.h = imgH(bmp);
+  /* 미리보기용으로 줄여 둔다 — 설정을 바꿀 때마다 원본(수천만 화소)을 다시 그리지 않게 */
+  const k = Math.min(1, 1400 / Math.max(f.w, f.h));
+  const pv = newCanvas(f.w * k, f.h * k);
+  pv.getContext('2d').drawImage(bmp, 0, 0, pv.width, pv.height);
+  if (bmp.close) bmp.close();
+  f.pv = pv;
+  f.thumb = thumbOf(pv);
+}
+async function loadPdf(f) {
+  const bytes = new Uint8Array(await f.file.arrayBuffer());
+  let info;
+  try { info = await pdfPreviewInfo(bytes, f.name); }
+  catch (e) {
+    if (/암호/.test(e.message || '')) throw new Error('암호가 걸린 PDF입니다 — 암호를 푼 사본으로 넣어 주세요');
+    throw e;
+  }
+  f.pages = info.pages; f.dw = info.dw; f.dh = info.dh; f.bg = info.bg; f.unlocked = info.unlocked;
+  const k = 1400 / Math.max(f.dw, f.dh);
+  const pv = newCanvas(Math.max(40, f.dw * k), Math.max(40, f.dh * k));
+  const x = pv.getContext('2d');
+  if (f.bg) { x.fillStyle = '#fff'; x.fillRect(0, 0, pv.width, pv.height); x.drawImage(f.bg, 0, 0, pv.width, pv.height); }
+  else drawFakePage(x, pv.width, pv.height);
+  f.pv = pv;
+  f.thumb = thumbOf(pv);
+}
+function thumbOf(cv) {
+  const k = 88 / Math.max(cv.width, cv.height);
+  const t = newCanvas(cv.width * k, cv.height * k);
+  t.getContext('2d').drawImage(cv, 0, 0, t.width, t.height);
+  const u = t.toDataURL('image/jpeg', 0.8);
+  releaseCanvas(t);
+  return u;
+}
+
+/* ── 목록 ── */
+function okFiles() { return files.filter(f => !f.err && !f.loading); }
+function render() {
+  $('#listCard').classList.toggle('hide', !files.length);
+  $('#cnt').textContent = files.length;
+  const ok = okFiles();
+  const nImg = ok.filter(f => f.kind === 'img').length, nPdf = ok.filter(f => f.kind === 'pdf').length;
+  $('#sumInfo').textContent = files.length ? [nImg ? '사진 ' + nImg : '', nPdf ? 'PDF ' + nPdf : ''].filter(Boolean).join(' · ') : '';
+  $('#addInfo').textContent = files.length ? files.length + '개 넣음' : '';
+  $('#list').innerHTML = files.map(f => {
+    const info = f.loading ? '여는 중…'
+      : f.err ? '<span class="err">' + esc(f.err) + '</span>'
+      : f.kind === 'img' ? '사진 · ' + f.w.toLocaleString() + '×' + f.h.toLocaleString() + ' · ' + fmtSize(f.size)
+      : 'PDF · ' + f.pages + '쪽 · ' + fmtSize(f.size) + (f.unlocked ? ' · 인쇄·복사 잠금은 풀려서 저장됩니다' : '');
+    return '<li class="item' + (f.id === selId ? ' sel' : '') + (f.err ? ' bad' : '') + '" data-id="' + f.id + '">' +
+      '<div class="th">' + (f.thumb ? '<img src="' + f.thumb + '" alt="">' : (f.kind === 'pdf' ? 'PDF' : '…')) + '</div>' +
+      '<div class="meta"><div class="fname">' + esc(f.name) + '</div><div class="fsz">' + info + '</div></div>' +
+      '<div class="ctl"><button class="sq go" type="button" data-dl="' + f.id + '" aria-label="이 파일 저장"' + (f.err || f.loading ? ' disabled' : '') + '>⬇</button>' +
+      '<button class="sq x" type="button" data-x="' + f.id + '" aria-label="목록에서 빼기">✕</button></div></li>';
+  }).join('');
+  const n = ok.length;
+  $('#dlAll').disabled = !n || busy;
+  $('#dlAll').textContent = n > 1 ? '⬇ ' + n + '개 모두 저장 (ZIP)' : '⬇ 저장하기';
+  $('#dlOne').classList.toggle('hide', n < 2);
+  $('#dlOne').disabled = busy || !ok.some(f => f.id === selId);
+  const idx = ok.findIndex(f => f.id === selId);
+  $('#pvNav').classList.toggle('hide', n < 2 || idx < 0);
+  $('#pvPos').textContent = (idx + 1) + ' / ' + n;
+}
+
+/* ── 미리보기 ── 설정이 바뀌면 한 프레임에 한 번만 다시 그린다 */
+let pvRaf = 0;
+function schedulePreview() {
+  if (pvRaf) return;
+  pvRaf = requestAnimationFrame(() => { pvRaf = 0; drawPreview(); });
+}
+function drawPreview() {
+  const f = files.find(x => x.id === selId && !x.err && !x.loading);
+  const has = !!f;
+  $('#pvEmpty').classList.toggle('hide', has);
+  $('#pvBox').classList.toggle('hide', !has);
+  $('#pvNote').classList.toggle('hide', !has);
+  if (!has) {
+    $('#pvTitle').textContent = files.some(x => x.loading) ? '파일을 여는 중…' : '워터마크를 넣은 모습이 여기에 나옵니다';
+    $('#pvState').textContent = '';
+    paintMini(null);
+    return;
+  }
+  $('#pvTitle').textContent = f.name;
+  const box = $('#pvBox');
+  const bw = Math.max(120, box.clientWidth - 22);
+  const maxH = window.matchMedia('(min-width:980px)').matches ? Math.max(260, window.innerHeight - 360) : Math.min(window.innerHeight * 0.62, 560);
+  const ar = f.pv.width / f.pv.height;
+  let cssW = bw, cssH = bw / ar;
+  if (cssH > maxH) { cssH = maxH; cssW = maxH * ar; }
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const cv = $('#pv');
+  cv.width = Math.round(cssW * dpr); cv.height = Math.round(cssH * dpr);
+  cv.style.width = Math.round(cssW) + 'px';
+  const x = cv.getContext('2d');
+  x.imageSmoothingQuality = 'high';
+  x.clearRect(0, 0, cv.width, cv.height);
+  x.drawImage(f.pv, 0, 0, cv.width, cv.height);
+  const drew = drawWatermark(x, cv.width, cv.height, wmOpt());
+  $('#pvState').textContent = drew ? '' : (opt.kind === 'logo' ? '로고를 골라 주세요' : '글자를 적어 주세요');
+  let note;
+  if (f.kind === 'pdf') {
+    note = 'PDF <b>첫 쪽</b> · 모두 ' + f.pages + '쪽에 같은 모양으로 들어갑니다. ' +
+      (f.bg ? '스캔 그림 위에 보여 드립니다.' : '회색 줄은 글자 자리를 나타낸 <b>대략적인 모습</b>이고, 워터마크 크기·위치는 실제와 같습니다.');
+  } else {
+    const shown = opt.maxSide && Math.max(f.w, f.h) > opt.maxSide;
+    note = '저장 크기 <b>' + (shown ? Math.round(f.w * opt.maxSide / Math.max(f.w, f.h)) + '×' + Math.round(f.h * opt.maxSide / Math.max(f.w, f.h)) : f.w + '×' + f.h) +
+      '</b> · ' + ({ 'image/jpeg': 'JPG', 'image/png': 'PNG', 'image/webp': 'WEBP' }[outType(f.file, opt.fmt)]) + '로 저장됩니다.';
+  }
+  $('#pvNote').innerHTML = note;
+  paintMini(cv);
+}
+/* 휴대폰 하단 바의 작은 미리보기 — 설정을 만지는 동안 결과를 곁눈질할 수 있게 */
+function paintMini(src) {
+  const m = $('#mbarPv');
+  if (!src) { m.classList.add('hide'); return; }
+  m.classList.remove('hide');
+  const h = 46, w = Math.max(20, Math.min(92, Math.round(h * src.width / src.height)));
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  m.width = w * dpr; m.height = h * dpr; m.style.width = w + 'px'; m.style.height = h + 'px';
+  m.getContext('2d').drawImage(src, 0, 0, m.width, m.height);
+}
+
+/* ── 만들기 · 저장 ── */
+function outName(f) {
+  const base = f.name.replace(/\.[^.]+$/, '') || 'file';
+  const ext = f.kind === 'pdf' ? 'pdf' : EXT[outType(f.file, opt.fmt)];
+  return base + '_워터마크.' + ext;
+}
+async function ensureOut(f, onProg) {
+  const s = sig();
+  if (f.out && f.out.sig === s) return f.out;
+  f.out = null;
+  if (f.kind === 'img') {
+    const r = await watermarkImage(f.file, wmOpt(), opt.fmt, opt.maxSide);
+    f.out = { sig: s, blob: r.blob, name: outName(f), shrunk: r.shrunk };
+  } else {
+    const bytes = new Uint8Array(await f.file.arrayBuffer());
+    const r = await watermarkPdf(bytes, f.name, wmOpt(), onProg);
+    f.out = { sig: s, blob: new Blob([r.bytes], { type: 'application/pdf' }), name: outName(f) };
+  }
+  return f.out;
+}
+function showProg(on, txt) { $('#prog').classList.toggle('show', on); if (txt) $('#ptxt').textContent = txt; }
+function setProg(p, txt) { $('#bar').style.width = Math.round(p * 100) + '%'; if (txt) $('#ptxt').textContent = txt; }
+
+async function saveFiles(list) {
+  if (busy || !list.length) return;
+  if (!ready()) { toast(opt.kind === 'logo' ? '로고 파일을 먼저 골라 주세요' : '넣을 글자를 적어 주세요', 2800); return; }
+  busy = true; render();
+  const btn = list.length > 1 ? $('#dlAll') : null;
+  showProg(true, '워터마크를 넣는 중…'); setProg(0);
+  const outs = []; const fails = [];
+  try {
+    for (let i = 0; i < list.length; i++) {
+      const f = list[i];
+      setProg(i / list.length, (i + 1) + ' / ' + list.length + ' · ' + f.name);
+      try {
+        outs.push(await ensureOut(f, p => setProg((i + p) / list.length)));
+      } catch (e) {
+        fails.push(f.name + ' — ' + ((e && e.message) || '실패'));
+      }
+      await new Promise(r => setTimeout(r, 0));
+    }
+    setProg(1, '저장 중…');
+    if (!outs.length) { toast('만들지 못했습니다 · ' + (fails[0] || ''), 5000); return; }
+    let blob, name;
+    if (outs.length === 1) { blob = outs[0].blob; name = outs[0].name; }
+    else {
+      const used = new Map(), entries = [];
+      for (const o of outs) {
+        let nm = o.name, k = used.get(nm) || 0;
+        used.set(nm, k + 1);
+        if (k) nm = nm.replace(/(\.[^.]+)$/, ' (' + (k + 1) + ')$1');
+        entries.push({ name: nm, data: new Uint8Array(await o.blob.arrayBuffer()) });
+      }
+      blob = makeZip(entries);
+      name = '워터마크_' + outs.length + '개_' + today().replace(/\./g, '') + '.zip';
+    }
+    if (!download(blob, name)) return;
+    const total = outs.reduce((a, o) => a + o.blob.size, 0);
+    toast('저장했습니다 · ' + (outs.length > 1 ? outs.length + '개 ZIP · ' : '') + fmtSize(total), 3000);
+    if (fails.length) setTimeout(() => toast(fails.length + '개는 빠졌습니다: ' + fails[0], 6000), 3100);
+    const shrunk = outs.some(o => o.shrunk);
+    AD.done((outs.length > 1 ? '워터마크를 넣은 파일 ' + outs.length + '개를 ZIP으로 저장했습니다.' : '「' + name + '」로 저장했습니다.') +
+      (shrunk ? ' 아주 큰 사진은 휴대폰 한계에 맞춰 조금 줄였습니다.' : '') + ' 보내기 전에 이것만 확인하세요.');
+  } finally {
+    busy = false; showProg(false); render();
+    if (btn) btn.blur();
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   앱 안 브라우저(네이버·카카오톡 등) — 파일 내려받기가 막혀 있다
+     ① 앱 안에서 열리면 사용을 막는 창을 띄워 브라우저를 옮기게 한다
+     ② 그래도 저장을 누르면 blob: 대신 data: 주소로 시도한다(10MB 까지)
+     ③ 아이폰은 사파리를 강제로 열 수 없어 주소 복사 + 메뉴 안내로 간다
+   ════════════════════════════════════════════════════════════ */
+const UA = navigator.userAgent || '';
+const IA = {
+  naver: /NAVER\(inapp/i.test(UA),
+  kakao: /KAKAOTALK/i.test(UA),
+  line: /\bLine\//i.test(UA),
+  ios: /iPhone|iPad|iPod/i.test(UA),
+  android: /Android/i.test(UA)
+};
+IA.on = IA.naver || IA.kakao || IA.line ||
+  /Instagram|FBAN|FBAV|FB_IAB|DaumApps|everytimeApp|band\/|KAKAOSTORY/i.test(UA) ||
+  (IA.android && /;\s*wv\)/i.test(UA));   /* 안드로이드 WebView 표시 */
+const IA_MAX = 10 * 1048576;               /* data: 주소는 base64 라 4/3 배로 커진다 — 그 이상은 막는다 */
+
+function externalUrl() {
+  const url = location.href;
+  if (IA.kakao) return 'kakaotalk://web/openExternal?url=' + encodeURIComponent(url);
+  if (IA.line) return url + (url.indexOf('?') >= 0 ? '&' : '?') + 'openExternalBrowser=1';
+  if (IA.android) return 'intent://' + url.replace(/^https?:\/\//i, '') +
+    '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(url) + ';end';
+  return '';          /* 아이폰은 사파리를 강제로 열 수 없다 */
+}
+function copyAddr(guide) {
+  const url = location.href;
+  const done = () => toast(guide ? '주소를 복사했습니다. 사파리를 열고 붙여 넣거나, 메뉴에서 「다른 브라우저로 열기」를 누르세요.' : '주소를 복사했습니다.', 5200);
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(url).then(done, () => fallbackCopy(url, done)); return; }
+  } catch (e) { /* 아래로 */ }
+  fallbackCopy(url, done);
+}
+function fallbackCopy(text, done) {
+  const t = document.createElement('textarea');
+  t.value = text; t.setAttribute('readonly', ''); t.style.cssText = 'position:fixed;left:-9999px;top:0';
+  document.body.appendChild(t); t.select(); t.setSelectionRange(0, text.length);
+  try { document.execCommand('copy'); done(); } catch (e) { toast('주소를 길게 눌러 복사해 주세요.', 4200); }
+  t.remove();
+}
+/* 저장은 전부 이 한 곳을 거친다. 막혔으면 false */
+function download(blob, name) {
+  if (IA.on) return downloadInApp(blob, name);
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name; a.rel = 'noopener';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+  return true;
+}
+function downloadInApp(blob, name) {
+  if (blob.size > IA_MAX) {
+    toast('앱 안에서는 10MB가 넘는 파일을 저장할 수 없습니다. 위쪽 「' + $('#iaGo').textContent + '」를 눌러 주세요.', 5600);
+    return false;
+  }
+  const go = href => {
+    const a = document.createElement('a');
+    a.href = href; a.download = name; a.rel = 'noopener';
+    document.body.appendChild(a); a.click(); a.remove();
+  };
+  const fr = new FileReader();
+  fr.onload = () => { try { go(fr.result); } catch (e) { /* 안내로 넘어간다 */ } };
+  fr.onerror = () => toast('앱 안에서는 저장이 막혀 있습니다. 위쪽 「' + $('#iaGo').textContent + '」를 눌러 주세요.', 5200);
+  fr.readAsDataURL(blob);
+  return true;
+}
+
+/* ════════════════════════════════════════════════════════════
+   광고 — 한 화면에 4곳 (애드핏 운영정책: 한 페이지 4개 초과 게재 금지)
+     모바일  ① 맨 위 320×50   ③ 본문 320×100   ④ 저장 완료 카드 300×250   ⑤ 하단 오버형 320×50
+     PC      ① 맨 위 320×50   ② 미리보기 위 320×50   ③ 본문 320×100   ④ 저장 완료 카드 300×250
+   지킨 것
+     · ins 를 자리마다 다 만든 뒤 ba.min.js 는 맨 끝에 딱 한 번 붙인다
+     · 입력 중·미리보기를 보는 중에는 오버형을 내려 둔다(핵심 행동 중 광고 노출 금지)
+     · 저장 완료 광고는 창으로 덮지 않고 본문에 카드로 펼친다(콘텐츠를 가리는 배치 금지)
+     · 앱 안에서 막는 창이 떠 있으면 광고를 부르지 않는다
+   ※ 단위 ID 는 애드핏에서 크기별로 따로 발급받아 아래 units 에만 적으면 된다.
+     DAN-XXXX… 로 남아 있는 자리는 점선 자리표시자만 그리고 요청은 보내지 않는다.
+   ════════════════════════════════════════════════════════════ */
+const AD = {
+  units: {
+    top:     { id: 'DAN-XXXXXXXXXXXXXXX1', w: 320, h: 50 },   /* 맨 위 · 모바일과 PC 크기가 같아 하나로 겸한다 */
+    side_pc: { id: 'DAN-XXXXXXXXXXXXXXX2', w: 320, h: 50 },   /* PC 미리보기 카드 위 (좁은 화면에서는 안 뜬다) */
+    mid:     { id: 'DAN-XXXXXXXXXXXXXXX3', w: 320, h: 100 },  /* 본문 중간 · 모바일·PC 같은 자리라 하나로 쓴다 */
+    done:    { id: 'DAN-XXXXXXXXXXXXXXX4', w: 300, h: 250 },  /* 저장 완료 카드 · 모바일·PC 공통 */
+    anchor:  { id: 'DAN-XXXXXXXXXXXXXXX5', w: 320, h: 50 }    /* 모바일 하단 오버형 (PC 에서는 안 뜬다) */
+  },
+  iframeOk: true,   /* iframe 안에서도 띄우려면 true (애드핏에서는 권하지 않음) */
+  popup: true,      /* 저장 완료 카드 */
+  overlay: true,    /* 하단 오버형 */
+  init() {
+    if (this.started) return;
+    this.started = true;
+    this.off = window.top !== window.self && !this.iframeOk;
+    this.pc = window.matchMedia('(min-width:980px)').matches;
+    if (this.off) { document.body.classList.add('no-ad'); return; }
+    this.put($('#ad-top'), 'top');
+    if (this.pc) this.put($('#ad-side'), 'side_pc');
+    this.put($('#ad-mid'), 'mid');
+    /* 숨어 있는 자리(하단 오버형·저장 완료 카드)는 화면에 나온 다음에 부른다 —
+       안 보이는 동안 부르면 보는 사람 없이 노출만 잡힌다 */
+    this.load();
+  },
+  put(box, key, preload) {
+    const u = this.units[key];
+    if (!box || !u || box.dataset.ad) return;
+    if (document.querySelectorAll('ins.kakao_ad_area').length >= 4) return;
+    box.dataset.ad = key;
+    box.style.width = u.w + 'px';
+    if (/XXXX/.test(u.id)) { box.style.height = u.h + 'px'; box.innerHTML = '<div class="ad-ph">광고 ' + u.w + ' × ' + u.h + '</div>'; return; }
+    box.style.minHeight = u.h + 'px';
+    /* 광고가 안 내려오면 빈 칸이 남는다 — 공식 콜백으로 접는다. 단위가 여럿이면 이름이 서로 달라야 한다 */
+    const fail = 'adNone_' + box.id.replace(/-/g, '_');
+    window[fail] = () => {
+      box.classList.add('ad-none');
+      if (key === 'anchor') { this.closed = true; this.sync(true); }
+      if (key === 'done') { const d = $('#doneAd'); if (d) d.classList.add('ad-none'); }
+    };
+    const ins = document.createElement('ins');
+    ins.className = 'kakao_ad_area'; ins.style.display = 'none';
+    ins.setAttribute('data-ad-unit', u.id);
+    ins.setAttribute('data-ad-width', String(u.w));
+    ins.setAttribute('data-ad-height', String(u.h));
+    ins.setAttribute('data-ad-onfail', fail);
+    if (preload) ins.setAttribute('data-ad-preload', 'Y');
+    box.appendChild(ins);
+    this.need = true;
+  },
+  show(box, key) {
+    if (this.off || !this.started || !box || box.dataset.ad) return;
+    this.put(box, key, true);
+    this.load();
+    try {
+      const ins = box.querySelector('ins');
+      if (ins && window.adfit && typeof window.adfit.render === 'function') window.adfit.render(ins);
+    } catch (e) { /* 안 되면 0.7초 뒤 preload 차례가 채운다 */ }
+  },
+  load() {
+    if (!this.need || this.loaded) return;
+    this.loaded = true;
+    const s = document.createElement('script');
+    s.type = 'text/javascript'; s.async = true;
+    s.src = 'https://t1.kakaocdn.net/kas/static/ba.min.js';
+    document.body.appendChild(s);
+  },
+  onScreen(el) {
+    if (!el || el.classList.contains('hide')) return false;
+    const r = el.getBoundingClientRect();
+    return r.height > 0 && r.bottom > 0 && r.top < window.innerHeight;
+  },
+  /* 하단 오버형 — 읽는 구간(이럴 때 씁니다·자주 묻는 것·주의)에서만 올라온다.
+     넣기·설정·목록·미리보기·완료 카드 가운데 하나라도 화면에 보이면 내린다.
+     (휴대폰에서는 main 이 display:contents 라 #form 자체는 크기가 0 — 카드마다 따로 본다) */
+  sync(barOn) {
+    if (this.off || this.pc || !this.overlay || !this.started) return;
+    const modal = document.body.classList.contains('ia-lock');
+    const ae = document.activeElement;
+    const typing = !!(ae && ae.closest && ae.closest('#form') &&
+      (/^(SELECT|TEXTAREA)$/.test(ae.tagName) || (ae.tagName === 'INPUT' && !/^(checkbox|radio|button|file|range|color)$/.test(ae.type))));
+    const working = ['#addCard', '#setCard', '#listCard', '#pvCard', '#doneCard'].some(s => this.onScreen($(s)));
+    const show = !this.closed && !barOn && !modal && !typing && !working && window.scrollY > 320;
+    $('#anchor').classList.toggle('on', show);
+    document.body.classList.toggle('anch', show);
+    if (show) this.show($('#ad-anchor'), 'anchor');
+  },
+  done(msg) {
+    if (!this.popup) return;
+    $('#doneMsg').textContent = msg;
+    $('#doneCard').classList.remove('hide');
+    if (!this.off) this.show($('#ad-done'), 'done');
+    clearTimeout(this.goT);
+    this.goT = setTimeout(() => {
+      $('#doneCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      updateMbar();
+    }, 250);
+  },
+  hideDone() { $('#doneCard').classList.add('hide'); updateMbar(); }
+};
+
+function initInApp() {
+  if (!IA.on) return;
+  const app = IA.naver ? '네이버 앱' : IA.kakao ? '카카오톡' : IA.line ? '라인' : '앱';
+  const copyOnly = IA.ios && !IA.kakao && !IA.line;
+  const chromeIntent = IA.android && !IA.kakao && !IA.line;
+  document.body.classList.add('inapp');
+  $('#iaMsg').textContent = app + ' 안에서는 워터마크 넣은 파일이 저장되지 않습니다.';
+  $('#doneInapp').classList.remove('hide');
+  $('#iaDesc').innerHTML = '<b>' + app + '</b> 안에서 열렸습니다. 이 화면에서는 ' +
+    '<b>워터마크를 넣은 사진·PDF를 내려받을 수 없습니다.</b> 다 만들어도 받을 수 없으니 ' +
+    '<b>파일을 넣기 전에</b> 브라우저를 옮겨 주세요.';
+  const steps = copyOnly
+    ? ['아래 <b>주소 복사</b>를 누르세요.',
+       '오른쪽 아래 <b>메뉴</b>에서 「다른 브라우저로 열기」를 누르거나, <b>사파리</b> 주소창에 붙여 넣으세요.']
+    : chromeIntent
+      ? ['아래 <b>크롬에서 열기</b>를 누르세요.',
+         '크롬이 없으면 오른쪽 위 <b>메뉴</b>에서 「다른 브라우저로 열기」를 누르세요.']
+      : ['아래 <b>다른 브라우저로 열기</b>를 누르세요.',
+         '열리지 않으면 ' + (IA.ios ? '화면의' : '오른쪽 위') + ' <b>메뉴</b>에서 「다른 브라우저로 열기」를 누르세요.'];
+  $('#iaSteps').innerHTML = steps.map(t => '<li>' + t + '</li>').join('');
+  const label = copyOnly ? '주소 복사' : chromeIntent ? '크롬에서 열기' : '다른 브라우저로 열기';
+  $('#iaGo').textContent = label; $('#iaGo2').textContent = label; $('#doneGo').textContent = label;
+  $('#iaSub').textContent = copyOnly
+    ? '사파리에 붙여 넣거나, 오른쪽 아래 메뉴에서 「다른 브라우저로 열기」를 누르세요.'
+    : '파일을 넣기 전에 옮기면 다시 고르지 않아도 됩니다.';
+  let hidden = false;
+  try { hidden = sessionStorage.getItem('watermark.iahide') === '1'; } catch (e) { /* 무시 */ }
+  if (hidden) document.body.classList.remove('inapp');
+  lockInApp(true);
+}
+function lockInApp(on) {
+  document.body.classList.toggle('ia-lock', on);
+  const w = document.querySelector('.wrap');
+  if (on) w.setAttribute('inert', ''); else w.removeAttribute('inert');
+  if (!on) $('#iaModal').blur();
+}
+function iaCopied() {
+  $('#iaDesc').innerHTML = '주소를 <b>복사했습니다.</b> 이제 <b>사파리</b>를 열고 주소창에 붙여 넣으세요.';
+  $('#iaSteps').innerHTML = '<li>홈 화면에서 <b>사파리</b>를 엽니다.</li>' +
+    '<li>주소창을 길게 눌러 <b>붙여넣기</b> 하세요.</li>' +
+    '<li>또는 이 화면의 <b>메뉴</b> → 「다른 브라우저로 열기」.</li>';
+}
+
+/* 휴대폰: 설정을 만지는 동안 미리보기가 화면 위로 올라가 있으면 아래 바(작은 미리보기)를 띄운다 */
+function updateMbar() {
+  const has = okFiles().length > 0;
+  const pr = $('#pvCard').getBoundingClientRect();
+  const inSet = AD.onScreen($('#setCard')) || AD.onScreen($('#listCard'));
+  const on = has && inSet && (pr.bottom < 60 || pr.top > window.innerHeight);
+  $('#mbar').classList.toggle('on', on);
+  $('#mbarGo').textContent = pr.bottom < 60 ? '미리보기 ↑' : '미리보기 ↓';
+  AD.sync(on);
+}
+
+/* ── 이벤트 ── */
+function resetAll() {
+  files = []; selId = 0;
+  render(); schedulePreview();
+  AD.hideDone();
+}
+function pickPreset(k) {
+  const ta = $('#wmText');
+  const d = today();
+  let v, sel = null;
+  if (k === 'submit') { v = '○○ 제출용\n다른 용도 사용 금지\n' + d; sel = '○○'; }
+  else if (k === 'copy') v = '무단 복제·배포 금지';
+  else if (k === 'c') { v = '© 내 이름'; sel = '내 이름'; }
+  else if (k === 'conf') v = '대외비 · 외부 유출 금지';
+  else if (k === 'sample') v = 'SAMPLE';
+  else if (k === 'date') {
+    v = ta.value.replace(/\s+$/, '');
+    if (v.indexOf(d) < 0) v = (v ? v + '\n' : '') + d;
+  }
+  ta.value = v; opt.text = v;
+  changed();
+  if (sel) {
+    const i = v.indexOf(sel);
+    try { ta.focus(); ta.setSelectionRange(i, i + sel.length); } catch (e) { /* 무시 */ }
+    toast('「' + sel + '」 자리를 바로 고쳐 쓰세요', 2400);
+  }
+}
+async function pickLogo(file) {
+  if (!file) return;
+  try {
+    const cv = await prepLogo(file, opt.white);
+    logoCv = cv; logoId++;
+    opt.kind = 'logo';
+    logoCv._file = file;
+    const th = $('#logoThumb');
+    th.innerHTML = '';
+    const t = newCanvas(cv.width, cv.height);
+    t.getContext('2d').drawImage(cv, 0, 0);
+    th.appendChild(t);
+    changed();
+  } catch (e) {
+    toast('로고를 열지 못했습니다 · ' + ((e && e.message) || ''), 4200);
+  }
+}
+function selMove(d) {
+  const ok = okFiles();
+  const i = ok.findIndex(f => f.id === selId);
+  if (i < 0 || ok.length < 2) return;
+  selId = ok[(i + d + ok.length) % ok.length].id;
+  render(); schedulePreview();
+}
+
+function init() {
+  loadOpt();
+  const drop = $('#drop'), inp = $('#file');
+  drop.addEventListener('click', () => inp.click());
+  drop.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); inp.click(); } });
+  inp.addEventListener('change', e => { addFiles(e.target.files); e.target.value = ''; });
+  $('#addMore').addEventListener('click', () => inp.click());
+  $('#clear').addEventListener('click', resetAll);
+
+  const locked = () => document.body.classList.contains('ia-lock');
+  ['dragenter', 'dragover'].forEach(ev => document.addEventListener(ev, e => {
+    e.preventDefault(); if (!locked()) drop.classList.add('over');
+  }));
+  ['dragleave', 'drop'].forEach(ev => document.addEventListener(ev, e => {
+    e.preventDefault();
+    if (ev === 'drop' || e.relatedTarget === null) drop.classList.remove('over');
+  }));
+  document.addEventListener('drop', e => {
+    if (locked()) return;
+    if (e.dataTransfer && e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
+  });
+
+  $('#list').addEventListener('click', e => {
+    const x = e.target.closest('[data-x]');
+    if (x) {
+      e.stopPropagation();
+      files = files.filter(v => v.id !== +x.dataset.x);
+      if (!files.length) { resetAll(); updateMbar(); return; }
+      if (!files.some(v => v.id === selId)) selId = files[0].id;
+      render(); schedulePreview(); updateMbar();
+      return;
+    }
+    const d = e.target.closest('[data-dl]');
+    if (d) { e.stopPropagation(); const f = files.find(v => v.id === +d.dataset.dl); if (f) saveFiles([f]); return; }
+    const li = e.target.closest('.item');
+    if (!li) return;
+    selId = +li.dataset.id;
+    render(); schedulePreview();
+  });
+
+  /* 설정 */
+  $('#segKind').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    opt.kind = b.dataset.k;
+    changed();
+    if (opt.kind === 'logo' && !logoCv) $('#logoFile').click();
+  });
+  $('#wmText').addEventListener('input', () => { opt.text = $('#wmText').value; saveOpt(); paintOpt(); schedulePreview(); });
+  $('#presets').addEventListener('click', e => { const b = e.target.closest('.chip'); if (b) pickPreset(b.dataset.t); });
+  $('#logoBtn').addEventListener('click', () => $('#logoFile').click());
+  $('#logoFile').addEventListener('change', e => { pickLogo(e.target.files[0]); e.target.value = ''; });
+  $('#optWhite').addEventListener('change', () => {
+    opt.white = $('#optWhite').checked; saveOpt();
+    if (logoCv && logoCv._file) pickLogo(logoCv._file);
+  });
+  $('#segLayout').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    opt.layout = b.dataset.l;
+    /* 가운데 크게는 기본 크기를 키워 준다(바둑판 크기 그대로면 너무 작다) */
+    if (opt.layout === 'center' && opt.kind === 'text' && opt.sizeT < 8) opt.sizeT = 9;
+    if (opt.layout === 'center' && opt.kind === 'logo' && opt.sizeL < 10) opt.sizeL = 14;
+    changed();
+  });
+  $('#posGrid').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; opt.pos = b.dataset.p; changed(); });
+  $('#rSize').addEventListener('input', () => { const v = +$('#rSize').value; if (opt.kind === 'logo') opt.sizeL = v; else opt.sizeT = v; changed(); });
+  $('#rOpa').addEventListener('input', () => { opt.opacity = +$('#rOpa').value; changed(); });
+  $('#rAng').addEventListener('input', () => { opt.angle = +$('#rAng').value; changed(); });
+  $('#rGap').addEventListener('input', () => { opt.gap = +$('#rGap').value; changed(); });
+  $('#colors').addEventListener('click', e => { const b = e.target.closest('.sw[data-c]'); if (!b) return; opt.color = b.dataset.c; changed(); });
+  $('#pickColor').addEventListener('input', () => { opt.color = $('#pickColor').value; changed(); });
+  $('#optBold').addEventListener('change', () => { opt.bold = $('#optBold').checked; changed(); });
+  $('#optStroke').addEventListener('change', () => { opt.stroke = $('#optStroke').checked; changed(); });
+  $('#segFmt').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; opt.fmt = b.dataset.f; changed(); });
+  $('#selSize').addEventListener('change', () => { opt.maxSide = +$('#selSize').value; changed(); });
+
+  /* 저장 */
+  $('#dlAll').addEventListener('click', () => saveFiles(okFiles()));
+  $('#dlOne').addEventListener('click', () => { const f = okFiles().find(v => v.id === selId); if (f) saveFiles([f]); });
+  $('#pvPrev').addEventListener('click', () => selMove(-1));
+  $('#pvNext').addEventListener('click', () => selMove(1));
+
+  $('#doneHide').addEventListener('click', () => AD.hideDone());
+  $('#anchorX').addEventListener('click', () => { AD.closed = true; AD.sync(true); });
+
+  const goOut = () => { const u = externalUrl(); if (u) { location.href = u; return; } copyAddr(true); iaCopied(); };
+  $('#iaGo').addEventListener('click', goOut);
+  $('#iaGo2').addEventListener('click', goOut);
+  $('#doneGo').addEventListener('click', goOut);
+  $('#iaStay').addEventListener('click', () => {
+    lockInApp(false);
+    AD.init();
+    updateMbar();
+    toast('저장은 안 됩니다. 파일을 받으려면 위쪽 「' + $('#iaGo').textContent + '」를 눌러 주세요.', 5200);
+  });
+  $('#iaX').addEventListener('click', () => {
+    document.body.classList.remove('inapp');
+    try { sessionStorage.setItem('watermark.iahide', '1'); } catch (e) { /* 무시 */ }
+  });
+
+  window.addEventListener('scroll', updateMbar, { passive: true });
+  let rzT;
+  window.addEventListener('resize', () => { updateMbar(); clearTimeout(rzT); rzT = setTimeout(schedulePreview, 120); }, { passive: true });
+  $('#form').addEventListener('focusin', updateMbar);
+  $('#form').addEventListener('focusout', () => setTimeout(updateMbar, 0));
+  $('#mbarGo').addEventListener('click', () => $('#pvCard').scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  $('#mbarPv').addEventListener('click', () => $('#pvCard').scrollIntoView({ behavior: 'smooth', block: 'start' }));
+
+  const ok = typeof DecompressionStream !== 'undefined' && typeof CompressionStream !== 'undefined';
+  if (!ok) {
+    $('#drop .t2').textContent = '이 브라우저는 오래되어 PDF에는 넣지 못합니다(사진은 됩니다). 크롬·사파리·엣지를 최신으로 올려 주세요.';
+  }
+
+  initInApp();
+  if (!document.body.classList.contains('ia-lock')) AD.init();
+  paintOpt();
+  render();
+  schedulePreview();
+  updateMbar();
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+</script>
+</body>
+</html>
